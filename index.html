@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paradise Market - Kreativitas Siswa Tanpa Batas</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            /* Menggunakan gambar samudera sebagai latar belakang utama dengan overlay pelindung keterbacaan teks */
+            background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.88), rgba(248, 250, 252, 0.94)), url('https://cdn.oceanographicmagazine.com/wp-content/uploads/2025/02/25095545/Untitled_1.90.1-1920x1080.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('home')">
+                    <!-- Menggunakan Logo Resmi Hasil Karya Anda -->
+                    <div class="w-12 h-12 rounded-xl overflow-hidden shadow-md shadow-emerald-100 flex items-center justify-center bg-white shrink-0 border border-slate-100">
+                        <img src="image_f1bfdd.jpg" 
+                             alt="Paradise Market Logo Resmi" 
+                             class="w-full h-full object-cover" 
+                             onerror="this.onerror=null; this.outerHTML='<i data-lucide=\'store\' class=\'w-6 h-6 text-teal-600\'></i>'; lucide.createIcons();">
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-500 bg-clip-text text-transparent">Paradise Market</span>
+                        <p class="text-[10px] text-slate-400 font-medium tracking-wide">KREATIVITAS SISWA MANDIRI</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-6">
+                    <button onclick="switchTab('home')" class="nav-link-btn text-teal-600 font-semibold flex items-center gap-1.5 py-2 px-3 rounded-lg hover:bg-slate-50 transition" id="nav-home">
+                        <i data-lucide="home" class="w-4 h-4"></i> Beranda
+                    </button>
+                    <button onclick="switchTab('catalog')" class="nav-link-btn text-slate-600 hover:text-teal-600 font-medium flex items-center gap-1.5 py-2 px-3 rounded-lg hover:bg-slate-50 transition" id="nav-catalog">
+                        <i data-lucide="shopping-bag" class="w-4 h-4"></i> Katalog
+                    </button>
+                    <button onclick="switchTab('dashboard')" class="nav-link-btn text-slate-600 hover:text-teal-600 font-medium flex items-center gap-1.5 py-2 px-3 rounded-lg hover:bg-slate-50 transition" id="nav-dashboard">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard Siswa
+                    </button>
+                </div>
+
+                <!-- Action Buttons (Cart, Favorites, Auth) -->
+                <div class="flex items-center gap-3">
+                    <!-- Favorites Button -->
+                    <button onclick="openFavoritesModal()" class="p-2.5 rounded-xl hover:bg-rose-50 border border-slate-100 hover:border-rose-100 text-slate-600 hover:text-rose-500 transition relative">
+                        <i data-lucide="heart" class="w-5 h-5"></i>
+                        <span id="fav-badge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
+                    </button>
+
+                    <!-- Cart Button -->
+                    <button onclick="switchTab('cart')" class="p-2.5 rounded-xl bg-teal-600 text-white hover:bg-teal-700 transition relative shadow-md shadow-teal-100">
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 bg-amber-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
+                    </button>
+
+                    <!-- Account / Session Profile Button -->
+                    <button id="user-profile-btn" onclick="openAuthModal()" class="flex items-center gap-2 py-1.5 px-3 rounded-xl border border-slate-200 hover:border-teal-200 hover:bg-teal-50/20 transition duration-150">
+                        <div id="user-avatar-placeholder" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-xs font-bold border border-slate-200">
+                            <i data-lucide="user" class="w-4 h-4"></i>
+                        </div>
+                        <div class="text-left hidden md:block">
+                            <p id="user-display-name" class="text-xs font-bold text-slate-800 leading-tight">Masuk</p>
+                            <p id="user-display-role" class="text-[9px] text-slate-400 font-medium">Sesi Tamu</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Custom Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-20 right-5 z-50 flex flex-col gap-2 max-w-sm w-full"></div>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ================= SECTION: HOME ================= -->
+        <section id="tab-home" class="tab-content space-y-10">
+            <!-- Banner Paradise Market dengan latar belakang kustom -->
+            <div class="relative bg-gradient-to-r from-teal-900/95 via-emerald-800/90 to-cyan-900/95 rounded-3xl overflow-hidden shadow-xl shadow-teal-100 text-white p-8 md:p-12">
+                <div class="absolute inset-0 bg-[url('https://cdn.oceanographicmagazine.com/wp-content/uploads/2025/02/25095545/Untitled_1.90.1-1920x1080.jpg')] bg-cover bg-center opacity-25 mix-blend-overlay"></div>
+                <!-- Abstract Floating Orbs -->
+                <div class="absolute -top-24 -left-24 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl"></div>
+
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold backdrop-blur-md uppercase tracking-wider">
+                        🎉 Bazaar Sekolah 2026 Sedang Berlangsung!
+                    </span>
+                    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight">
+                        Dukung Karya Nyata <span class="text-amber-300 underline decoration-amber-400 decoration-wavy">Siswa Siswi</span> Kreatif Kami!
+                    </h1>
+                    <p class="text-slate-100 text-sm md:text-base leading-relaxed">
+                        Temukan berbagai produk unggulan mulai dari makanan lezat, camilan nagih, minuman segar, hingga kerajinan tangan aromatik karya siswa sekolah kami.
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="switchTab('catalog')" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-6 py-3 rounded-xl shadow-lg shadow-amber-500/30 transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+                            <i data-lucide="shopping-bag" class="w-5 h-5"></i> Mulai Belanja Sekarang
+                        </button>
+                        <button onclick="openAuthModal('siswa')" class="bg-white/10 hover:bg-white/20 border border-white/20 px-6 py-3 rounded-xl font-bold transition flex items-center gap-2">
+                            <i data-lucide="store" class="w-5 h-5 text-amber-300"></i> Portal Jual Siswa
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROD & LEADERS GRID -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left: Terlaris & Terbaru -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Produk Terlaris -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-amber-500 text-white p-1.5 rounded-lg"><i data-lucide="crown" class="w-5 h-5"></i></span>
+                                <h2 class="text-xl font-extrabold text-slate-800">Produk Terlaris Minggu Ini</h2>
+                            </div>
+                            <button onclick="switchTab('catalog')" class="text-teal-600 hover:text-teal-700 font-bold text-sm flex items-center gap-1">
+                                Lihat Semua <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div id="best-sellers-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Produk Terbaru -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-emerald-50 text-white p-1.5 rounded-lg"><i data-lucide="sparkles" class="w-5 h-5"></i></span>
+                                <h2 class="text-xl font-extrabold text-slate-800">Karya Terbaru Siswa</h2>
+                            </div>
+                        </div>
+                        <div id="new-arrivals-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Top Creators, Events & Bazaar Info -->
+                <div class="space-y-8">
+                    <!-- Siswa Terfavorit (Creator Leaderboard) -->
+                    <div class="bg-white/90 backdrop-blur-sm border border-slate-100 rounded-2xl p-6 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-50 pb-3">
+                            <h3 class="font-extrabold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="trophy" class="w-5 h-5 text-amber-500"></i> Siswa Terfavorit
+                            </h3>
+                            <span class="text-xs bg-teal-50 text-teal-700 font-bold px-2 py-0.5 rounded">Paling Populer</span>
+                        </div>
+                        <div class="space-y-3 max-h-[380px] overflow-y-auto pr-1" id="top-creators-list">
+                            <!-- Dynamic creator spotlights go here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EVENT & BAZAAR SEKOLAH -->
+            <div id="events-section" class="bg-slate-100/80 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-6 md:p-8 space-y-6 scroll-mt-20">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <span class="text-teal-600 font-bold text-xs uppercase tracking-wider flex items-center gap-1">
+                            <i data-lucide="calendar" class="w-4 h-4"></i> Agenda Mendatang
+                        </span>
+                        <h2 class="text-2xl font-extrabold text-slate-800">Event Kewirausahaan & Bazaar Sekolah</h2>
+                        <p class="text-sm text-slate-500">Ikuti keseruan pameran karya siswa secara langsung di lingkungan sekolah.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Event 1 -->
+                    <div class="bg-white/90 backdrop-blur-sm border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition flex flex-col md:flex-row gap-4">
+                        <div class="bg-teal-50 text-teal-700 p-4 rounded-xl flex flex-col items-center justify-center font-extrabold w-full md:w-20 shrink-0">
+                            <span class="text-2xl">20</span>
+                            <span class="text-xs uppercase">Juni</span>
+                        </div>
+                        <div class="space-y-2 flex-grow">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Bazaar</span>
+                                <span class="text-xs text-slate-400 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 08.00 - 15.00</span>
+                            </div>
+                            <h4 class="font-extrabold text-slate-800 text-base">Grand Bazaar Paradise Market 2026</h4>
+                            <p class="text-xs text-slate-500">Pameran kuliner, pertunjukan seni akustik siswa, serta stand produk kerajinan tangan aromatik di Lapangan Utama Sekolah.</p>
+                            <div class="text-xs font-semibold text-slate-600 flex items-center gap-1 pt-1">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-teal-500"></i> Lapangan Utama SMA Paradise
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Event 2 -->
+                    <div class="bg-white/90 backdrop-blur-sm border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition flex flex-col md:flex-row gap-4">
+                        <div class="bg-amber-50 text-amber-700 p-4 rounded-xl flex flex-col items-center justify-center font-extrabold w-full md:w-20 shrink-0">
+                            <span class="text-2xl">05</span>
+                            <span class="text-xs uppercase">Juli</span>
+                        </div>
+                        <div class="space-y-2 flex-grow">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Kompetisi</span>
+                                <span class="text-xs text-slate-400 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 09.00 - Selesai</span>
+                            </div>
+                            <h4 class="font-extrabold text-slate-800 text-base">Young Entrepreneur Challenge</h4>
+                            <p class="text-xs text-slate-500">Kompetisi idampulan bisnis kreatif antarkelas dengan juri entrepreneur profesional daerah. Dapatkan hadiah menarik & modal usaha!</p>
+                            <div class="text-xs font-semibold text-slate-600 flex items-center gap-1 pt-1">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-teal-500"></i> Aula Auditorium Lantai 3
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= SECTION: CATALOG ================= -->
+        <section id="tab-catalog" class="tab-content space-y-6 hidden">
+            <div class="space-y-2">
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Katalog Produk Digital</h1>
+                <p class="text-sm text-slate-500">Temukan barang dan camilan favorit karya siswa kami. Gunakan filter pencarian pintar di bawah ini.</p>
+            </div>
+
+            <!-- SMART SEARCH & FILTER COMPONENT -->
+            <div class="bg-white/90 backdrop-blur-sm border border-slate-100 rounded-2xl p-5 shadow-sm space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <!-- Search Input -->
+                    <div class="md:col-span-5 relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </span>
+                        <input type="text" id="search-input" oninput="applyFilters()" placeholder="Cari nama produk, kategori, pembuat, atau harga..." class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm">
+                    </div>
+
+                    <!-- Category Filter Dropdown -->
+                    <div class="md:col-span-3">
+                        <select id="category-filter" onchange="applyFilters()" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm bg-white">
+                            <option value="all">Semua Kategori</option>
+                            <option value="Makanan">🍞 Makanan</option>
+                            <option value="Camilan">🥔 Camilan</option>
+                            <option value="Minuman">🥤 Minuman</option>
+                            <option value="Kerajinan Tangan">🎨 Kerajinan Tangan</option>
+                        </select>
+                    </div>
+
+                    <!-- Creator Filter Dropdown -->
+                    <div class="md:col-span-2">
+                        <select id="creator-filter" onchange="applyFilters()" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm bg-white">
+                            <option value="all">Semua Siswa</option>
+                            <!-- Dynamically loaded creator options -->
+                        </select>
+                    </div>
+
+                    <!-- Sort Filter -->
+                    <div class="md:col-span-2">
+                        <select id="sort-filter" onchange="applyFilters()" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm bg-white">
+                            <option value="default">Urutan Standar</option>
+                            <option value="price-asc">Harga Terendah</option>
+                            <option value="price-desc">Harga Tertinggi</option>
+                            <option value="rating-desc">Rating Tertinggi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Price Range Filter Slider -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-slate-50">
+                    <div class="flex items-center gap-4 flex-grow">
+                        <span class="text-xs font-semibold text-slate-500 whitespace-nowrap">Filter Harga Maksimal:</span>
+                        <input type="range" id="price-range" min="1000" max="150000" step="1000" value="150000" oninput="updatePriceSlider(this.value)" class="w-full accent-teal-600">
+                        <span id="price-range-label" class="text-xs bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded">Rp 150.000</span>
+                    </div>
+                    <button onclick="resetFilters()" class="text-xs text-rose-500 hover:text-rose-600 font-semibold flex items-center gap-1 whitespace-nowrap self-end sm:self-auto">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Fast Chips -->
+            <div class="flex flex-wrap gap-2" id="category-chips">
+                <button onclick="selectCategoryChip('all')" class="category-chip bg-teal-600 text-white text-xs px-4 py-2 rounded-full font-semibold border border-transparent hover:bg-teal-700 transition" data-category="all">Semua</button>
+                <button onclick="selectCategoryChip('Makanan')" class="category-chip bg-white text-slate-600 text-xs px-4 py-2 rounded-full font-semibold border border-slate-200 hover:border-teal-500 hover:text-teal-600 transition" data-category="Makanan">🍞 Makanan</button>
+                <button onclick="selectCategoryChip('Camilan')" class="category-chip bg-white text-slate-600 text-xs px-4 py-2 rounded-full font-semibold border border-slate-200 hover:border-teal-500 hover:text-teal-600 transition" data-category="Camilan">🥔 Camilan</button>
+                <button onclick="selectCategoryChip('Minuman')" class="category-chip bg-white text-slate-600 text-xs px-4 py-2 rounded-full font-semibold border border-slate-200 hover:border-teal-500 hover:text-teal-600 transition" data-category="Minuman">🥤 Minuman</button>
+                <button onclick="selectCategoryChip('Kerajinan Tangan')" class="category-chip bg-white text-slate-600 text-xs px-4 py-2 rounded-full font-semibold border border-slate-200 hover:border-teal-500 hover:text-teal-600 transition" data-category="Kerajinan Tangan">🎨 Kerajinan Tangan</button>
+            </div>
+
+            <!-- Active Filters Status / Item Count -->
+            <div class="text-xs text-slate-500 font-bold" id="search-result-count">
+                Menampilkan 0 produk dari total 0 karya terdaftar.
+            </div>
+
+            <!-- Main Product Grid -->
+            <div id="catalog-products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Dynamically Populated Cards -->
+            </div>
+        </section>
+
+
+        <!-- ================= SECTION: CART & CHECKOUT ================= -->
+        <section id="tab-cart" class="tab-content space-y-6 hidden">
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Keranjang Belanja & Checkout</h1>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left: Cart Items List -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="bg-white/95 backdrop-blur-sm border border-slate-100 rounded-2xl p-6 shadow-sm space-y-4">
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center justify-between">
+                            <span>Daftar Belanja</span>
+                            <span id="cart-count-label" class="text-xs bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full font-bold">0 Item</span>
+                        </h2>
+                        
+                        <div id="cart-items-container" class="divide-y divide-slate-100 space-y-4">
+                            <!-- Populated dynamically with JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Checkout Form -->
+                <div class="bg-white/95 backdrop-blur-sm border border-slate-100 rounded-2xl p-6 shadow-sm space-y-6 h-fit">
+                    <h2 class="text-lg font-bold text-slate-800 border-b border-slate-50 pb-3">Informasi Pemesanan Online</h2>
+                    
+                    <!-- Alert User to Log In to checkout -->
+                    <div id="checkout-auth-alert" class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-800 flex items-start gap-2">
+                        <i data-lucide="info" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></i>
+                        <div class="space-y-1">
+                            <p class="font-bold">Sesi Tamu Terdeteksi</p>
+                            <p>Anda disarankan untuk <button onclick="openAuthModal('pembeli')" class="underline font-bold text-teal-700 hover:text-teal-800">Masuk sebagai Pembeli</button> terlebih dahulu untuk memproses pesanan otomatis.</p>
+                        </div>
+                    </div>
+
+                    <form id="checkout-form" onsubmit="processOrder(event)" class="space-y-4">
+                        <!-- Buyer Name -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Nama Pembeli *</label>
+                            <input type="text" required id="order-name" placeholder="Masukkan nama lengkap Anda..." class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm">
+                        </div>
+
+                        <!-- Delivery Address -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Alamat Pengiriman (Kelas/Rumah) *</label>
+                            <textarea required id="order-address" rows="2" placeholder="Sebutkan kelas/ruangan sekolah jika di lingkungan sekolah, atau alamat rumah lengkap..." class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm resize-none"></textarea>
+                        </div>
+
+                        <!-- Courier Service -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Jasa Pengiriman *</label>
+                            <select id="order-shipping" onchange="recalculateTotals()" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm bg-white">
+                                <option value="kurir-sekolah">🚴 Kurir Internal Siswa (Sekitar Sekolah - Gratis)</option>
+                                <option value="cod">🤝 Ambil Sendiri / COD di Stand Bazaar (Gratis)</option>
+                                <option value="jne">📦 JNE / J&T Regular (+Rp 10.000)</option>
+                            </select>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Metode Pembayaran *</label>
+                            <select id="order-payment" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm bg-white">
+                                <option value="tunai">💵 Bayar Tunai (Cash on Delivery)</option>
+                                <option value="qris">📱 QRIS / E-Wallet (OVO, GoPay, Dana)</option>
+                                <option value="tabungan">🏫 Kas / Tabungan Sekolah</option>
+                            </select>
+                        </div>
+
+                        <!-- Summary Costs -->
+                        <div class="bg-slate-50 rounded-xl p-4 space-y-2.5 text-xs font-medium border border-slate-100">
+                            <div class="flex justify-between text-slate-500">
+                                <span>Subtotal Belanja:</span>
+                                <span id="checkout-subtotal">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-slate-500">
+                                <span>Ongkos Kirim:</span>
+                                <span id="checkout-shipping">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-slate-800 text-sm font-bold border-t border-slate-200/80 pt-2.5">
+                                <span>Total Tagihan:</span>
+                                <span id="checkout-total" class="text-teal-600 text-base">Rp 0</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submit-order-btn" disabled class="w-full py-3 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition shadow-md shadow-teal-100 flex items-center justify-center gap-2">
+                            <i data-lucide="shopping-bag" class="w-5 h-5"></i> Selesaikan & Pesan Sekarang
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= SECTION: DASHBOARD (STUDENT LOGIN REQUIRED) ================= -->
+        <section id="tab-dashboard" class="tab-content space-y-8 hidden">
+            
+            <!-- 1. STUDENT LOGIN VIEW (Tampil saat belum login) -->
+            <div id="dashboard-login-view" class="max-w-md mx-auto bg-white/95 backdrop-blur-sm border border-slate-100 rounded-3xl p-8 shadow-xl text-center space-y-6 my-10">
+                <div class="inline-flex bg-teal-50 p-4 rounded-3xl text-teal-600 mb-2">
+                    <i data-lucide="lock" class="w-10 h-10"></i>
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-extrabold text-slate-800">Akses Terbuka Khusus Siswa</h2>
+                    <p class="text-xs text-slate-500">Anda harus masuk menggunakan Akun Siswa terdaftar untuk dapat mengelola produk, memantau penjualan, dan melihat dashboard keuangan.</p>
+                </div>
+                
+                <button onclick="openAuthModal('siswa')" class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl transition shadow-md shadow-teal-100 flex items-center justify-center gap-2 text-sm">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Portal Siswa Sekarang
+                </button>
+            </div>
+
+            <!-- 2. MAIN DASHBOARD CONTENT (Tampil setelah sukses login) -->
+            <div id="dashboard-main-view" class="space-y-8 hidden">
+                <!-- Header Dashboard -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Dashboard Penjualan Siswa</h1>
+                        <p class="text-sm text-slate-600 font-bold" id="dashboard-welcome-msg">Selamat datang kembali, Kreator!</p>
+                    </div>
+                    
+                    <!-- Logout & Status -->
+                    <div class="flex items-center gap-2">
+                        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Mode Kreator Aktif
+                        </div>
+                        <button onclick="handleLogout()" class="bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition">
+                            <i data-lucide="log-out" class="w-4 h-4"></i> Keluar Sesi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid (Filtered to current Student) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white/95 backdrop-blur-sm border border-slate-100 rounded-2xl p-5 shadow-sm space-y-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Pendapatan Anda</p>
+                        <p class="text-2xl font-extrabold text-slate-800" id="dash-revenue">Rp 0</p>
+                        <span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full flex items-center w-fit gap-1">
+                            <i data-lucide="trending-up" class="w-3 h-3"></i> Hasil Bersih Anda
+                        </span>
+                    </div>
+                    <div class="bg-white/95 backdrop-blur-sm border border-slate-100 rounded-2xl p-5 shadow-sm space-y-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Produk Anda Terjual</p>
+                        <p class="text-2xl font-extrabold text-slate-800" id="dash-sold">0 Pcs</p>
+                        <span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full flex items-center w-fit gap-1">
+                            <i data-lucide="package" class="w-3 h-3"></i> Terdistribusi Luas
+                        </span>
+                    </div>
+                    <div class="bg-white/95 backdrop-blur-sm border border-slate-100 rounded-2xl p-5 shadow-sm space-y-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Varian Karya Terdaftar</p>
+                        <p class="text-2xl font-extrabold text-slate-800" id="dash-registered">0 Item</p>
+                        <span class="text-[10px] text-teal-600 font-bold bg-teal-50 px-2 py-0.5 rounded-full flex items-center w-fit gap-1">
+                            Semua Aktif
+                        </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Sales Chart Column (Left) -->
+                    <div class="lg:col-span-2 bg-white/95 backdrop-blur-sm border border-slate-100 rounded-2xl p-5 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-50 pb-3">
+                            <h2 class="text-lg font-extrabold text-slate-800">Grafik Penjualan Anda (Mingguan)</h2>
+                            <span class="text-xs text-slate-400">Pembaruan otomatis tiap pembelian</span>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="salesChart" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Add Student Product (Right) -->
+                    <div class="bg-white/95 backdrop-blur-sm border border-slate-100 rounded-2xl p-6 shadow-sm space-y-4">
+                        <h2 class="text-lg font-extrabold text-slate-800 border-b border-slate-50 pb-3 flex items-center gap-1.5">
+                            <i data-lucide="plus-circle" class="text-teal-500 w-5 h-5"></i> Tambah Produk Baru
+                        </h2>
+                        
+                        <form id="add-product-form" onsubmit="handleAddNewProduct(event)" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Nama Produk *</label>
+                                <input type="text" required id="new-prod-name" placeholder="Misal: Kue Cubit Matcha" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Harga (Rp) *</label>
+                                    <input type="number" required id="new-prod-price" placeholder="Harga Jual" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Stok Awal *</label>
+                                    <input type="number" required id="new-prod-stock" placeholder="Stok" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Kategori *</label>
+                                    <select id="new-prod-category" class="w-full px-2 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs bg-white">
+                                        <option value="Makanan">🍞 Makanan</option>
+                                        <option value="Camilan">🥔 Camilan</option>
+                                        <option value="Minuman">🥤 Minuman</option>
+                                        <option value="Kerajinan Tangan">🎨 Kerajinan Tangan</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Nama Pembuat</label>
+                                    <input type="text" id="new-prod-creator-display" readonly class="w-full px-3 py-2 border border-slate-100 bg-slate-50 rounded-xl text-xs text-slate-500 font-bold cursor-not-allowed">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Deskripsi Singkat *</label>
+                                <textarea id="new-prod-desc" rows="2" placeholder="Sebutkan bahan-bahan utama atau info unik produk..." class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs resize-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition shadow shadow-teal-100 flex items-center justify-center gap-1">
+                                <i data-lucide="check" class="w-4 h-4"></i> Publikasikan Produk Baru
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 mt-12 border-t border-slate-800 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <!-- Menggunakan Logo Resmi Hasil Karya Anda -->
+                    <div class="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-white shrink-0 border border-slate-800">
+                        <img src="image_f1bfdd.jpg" 
+                             alt="Paradise Market Logo Resmi" 
+                             class="w-full h-full object-cover" 
+                             onerror="this.onerror=null; this.outerHTML='<i data-lucide=\'store\' class=\'w-5 h-5 text-teal-500\'></i>'; lucide.createIcons();">
+                    </div>
+                    <span class="text-white font-extrabold text-lg">Paradise Market</span>
+                </div>
+                <p class="text-xs leading-relaxed text-slate-400">
+                    Aplikasi Marketplace Kreatif Siswa, mendukung kemandirian finansial dan mengajarkan etika wirausaha yang modern, inklusif, dan ramah lingkungan.
+                </p>
+            </div>
+            <div class="space-y-3">
+                <h4 class="text-white font-bold text-sm">Link Cepat</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button onclick="switchTab('home')" class="text-left hover:text-white">Beranda</button>
+                    <button onclick="switchTab('catalog')" class="text-left hover:text-white">Katalog</button>
+                    <button onclick="switchTab('dashboard')" class="text-left hover:text-white">Dashboard Siswa</button>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <h4 class="text-white font-bold text-sm">Butuh Bantuan?</h4>
+                <p class="text-xs text-slate-400">Hubungi Panitia Bazaar Kewirausahaan Sekolah:</p>
+                <div class="text-xs text-teal-400 font-semibold space-y-1">
+                    <p class="flex items-center gap-1"><i data-lucide="mail" class="w-3.5 h-3.5"></i> bazzar@paradiseschool.sch.id</p>
+                    <p class="flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5"></i> +62 812-3456-7890</p>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-8 border-t border-slate-800 text-center text-xs text-slate-500">
+            &copy; 2026 Paradise Market SMA Paradise. Dibuat dengan cinta oleh tim muda kewirausahaan siswa. All rights reserved.
+        </div>
+    </footer>
+
+
+    <!-- ================= MODALS & DETAILED VIEWS ================= -->
+
+    <!-- FAVORITES MODAL -->
+    <div id="favorites-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl flex flex-col max-h-[85vh]">
+            <div class="flex items-center justify-between border-b border-slate-50 pb-3">
+                <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <i data-lucide="heart" class="text-rose-500 fill-rose-500 w-5 h-5"></i> Daftar Produk Favorit Anda
+                </h3>
+                <button onclick="closeFavoritesModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div id="favorites-list-container" class="space-y-3 overflow-y-auto flex-grow divide-y divide-slate-100 pr-2">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAIL MODAL (With Social Share, QR Generator, Creator Profile, Ratings/Comments) -->
+    <div id="detail-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b border-slate-50 pb-2">
+                <div class="flex items-center gap-2">
+                    <span id="detail-category-badge" class="bg-teal-50 text-teal-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Kategori</span>
+                    <span id="detail-promo-badge" class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase hidden">🎁 Diskon</span>
+                </div>
+                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg border border-slate-50">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <!-- Left: Big Emoji/Img Preview & Dynamic QR Code -->
+                <div class="space-y-4">
+                    <div class="aspect-square bg-slate-100 rounded-2xl flex items-center justify-center text-7xl select-none border border-slate-50 relative shadow-inner" id="detail-emoji-large">
+                        🎁
+                    </div>
+                    <!-- QR Code Widget Container -->
+                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl flex flex-col items-center justify-center gap-2">
+                        <div id="product-qrcode" class="bg-white p-2 rounded-lg shadow-sm"></div>
+                        <p class="text-[10px] text-slate-400 font-semibold text-center">Scan QR Code ini untuk bagikan & pesan langsung!</p>
+                    </div>
+                </div>
+
+                <!-- Right: Product Info, Price, Creator Info -->
+                <div class="space-y-4">
+                    <div>
+                        <h2 id="detail-title" class="text-2xl font-extrabold text-slate-800 leading-tight">Nama Produk</h2>
+                        <!-- Share Buttons -->
+                        <div class="flex items-center gap-1.5 mt-2">
+                            <span class="text-xs text-slate-400 font-semibold">Bagikan ke:</span>
+                            <button onclick="shareProduct('whatsapp')" class="p-1 rounded bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"><i data-lucide="phone-call" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="shareProduct('facebook')" class="p-1 rounded bg-blue-50 text-blue-600 hover:bg-blue-100 transition"><i data-lucide="facebook" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="shareProduct('instagram')" class="p-1 rounded bg-pink-50 text-pink-600 hover:bg-pink-100 transition"><i data-lucide="instagram" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="shareProduct('tiktok')" class="p-1 rounded bg-black text-white hover:bg-zinc-800 transition"><i data-lucide="music" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold">Harga Pas</span>
+                            <p id="detail-price" class="text-xl font-extrabold text-teal-600">Rp 0</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-400 uppercase font-bold">Stok Tersedia</span>
+                            <p id="detail-stock" class="text-sm font-bold text-slate-700">0 Pcs</p>
+                        </div>
+                    </div>
+
+                    <p id="detail-desc" class="text-xs text-slate-500 leading-relaxed">Penjelasan singkat produk.</p>
+
+                    <!-- Profile Creator Card -->
+                    <div id="detail-creator-card" class="bg-teal-50/50 border border-teal-100 p-4 rounded-xl space-y-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center font-bold text-teal-700 text-sm" id="detail-creator-avatar">
+                                A
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800">Dibuat Oleh: <span id="detail-creator-name" class="text-teal-600">Nama Siswa</span></h4>
+                                <p id="detail-creator-class" class="text-[10px] text-slate-400 font-semibold">Kelas XI</p>
+                            </div>
+                        </div>
+                        <p id="detail-creator-story" class="text-[11px] text-slate-600 italic">"Cerita singkat tentang proses pembuatannya."</p>
+                    </div>
+
+                    <!-- Add to Cart CTA -->
+                    <button id="detail-add-cart-btn" onclick="addCurrentToCart()" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> Tambah Ke Keranjang Belanja
+                    </button>
+                </div>
+            </div>
+
+            <!-- REVIEW & COMMENTS -->
+            <div class="border-t border-slate-100 pt-4 space-y-4">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-1.5">
+                    <i data-lucide="message-square" class="w-4 h-4 text-teal-500"></i> Rating & Ulasan Pembeli
+                </h3>
+
+                <!-- Submit New Review Form -->
+                <form id="review-form" onsubmit="submitReview(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-500">Beri Bintang:</span>
+                        <!-- Stars input -->
+                        <div class="flex items-center gap-1">
+                            <button type="button" onclick="setReviewRating(1)" class="review-star-btn text-slate-300 hover:text-amber-400 transition" data-val="1"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                            <button type="button" onclick="setReviewRating(2)" class="review-star-btn text-slate-300 hover:text-amber-400 transition" data-val="2"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                            <button type="button" onclick="setReviewRating(3)" class="review-star-btn text-slate-300 hover:text-amber-400 transition" data-val="3"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                            <button type="button" onclick="setReviewRating(4)" class="review-star-btn text-slate-300 hover:text-amber-400 transition" data-val="4"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                            <button type="button" onclick="setReviewRating(5)" class="review-star-btn text-slate-300 hover:text-amber-400 transition" data-val="5"><i data-lucide="star" class="w-5 h-5 fill-current"></i></button>
+                        </div>
+                        <input type="hidden" id="new-review-rating" value="5">
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-review-name" required placeholder="Nama Anda" class="w-1/3 px-3 py-1.5 border border-slate-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-teal-500 focus:outline-none">
+                        <input type="text" id="new-review-comment" required placeholder="Tulis komentar ulasan Anda di sini..." class="w-2/3 px-3 py-1.5 border border-slate-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-teal-500 focus:outline-none">
+                    </div>
+                    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold py-1.5 px-4 rounded-lg transition self-end">Kirim Ulasan</button>
+                </form>
+
+                <!-- Review Feed List -->
+                <div id="reviews-list" class="space-y-3 divide-y divide-slate-100 max-h-48 overflow-y-auto pr-2">
+                    <!-- Loaded via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- DUAL AUTHENTICATION MODAL (SISWA & PEMBELI) -->
+    <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 flex flex-col relative overflow-hidden transition-all duration-200">
+            <!-- Decorative Background Element -->
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-teal-50 rounded-full -z-10"></div>
+            
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-lg border border-slate-50 bg-white shadow-sm">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Modal Headers -->
+            <div class="text-center pb-4">
+                <span class="text-xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-500 bg-clip-text text-transparent">Paradise Market</span>
+                <p class="text-[10px] text-slate-400 font-bold tracking-wide uppercase">Portal Akses Akun</p>
+            </div>
+
+            <!-- TABS (Active State Controls) -->
+            <div id="auth-tab-container" class="grid grid-cols-2 bg-slate-100 p-1 rounded-2xl mb-6">
+                <button id="auth-tab-pembeli" onclick="switchAuthTab('pembeli')" class="py-2.5 text-xs font-bold rounded-xl transition-all bg-white text-slate-800 shadow-sm flex items-center justify-center gap-1.5">
+                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> Pembeli
+                </button>
+                <button id="auth-tab-siswa" onclick="switchAuthTab('siswa')" class="py-2.5 text-xs font-bold rounded-xl transition-all text-slate-500 flex items-center justify-center gap-1.5">
+                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i> Siswa
+                </button>
+            </div>
+
+            <!-- 1. Form Login Pembeli -->
+            <div id="auth-form-pembeli" class="space-y-4">
+                <div class="text-center space-y-1">
+                    <h3 class="font-bold text-slate-800 text-sm">Masuk Sesi Pembeli</h3>
+                    <p class="text-xs text-slate-400">Mudahkan proses belanja dan rekam data pesanan Anda.</p>
+                </div>
+                <form id="buyer-login-form" onsubmit="handleBuyerLogin(event)" class="space-y-3.5">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Nama Lengkap Anda *</label>
+                        <input type="text" id="buyer-name-input" required placeholder="Contoh: Alya Rahma" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs bg-slate-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Alamat Pengiriman Default *</label>
+                        <input type="text" id="buyer-address-input" required placeholder="Contoh: Kelas XII atau Alamat Rumah..." class="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs bg-slate-50/50">
+                    </div>
+                    <button type="submit" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition shadow shadow-teal-100 flex items-center justify-center gap-1.5">
+                        <i data-lucide="check" class="w-4 h-4"></i> Masuk Sebagai Pembeli
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. Form Login Siswa -->
+            <div id="auth-form-siswa" class="space-y-4 hidden">
+                <div class="text-center space-y-1">
+                    <h3 class="font-bold text-slate-800 text-sm">Masuk Portal Siswa</h3>
+                    <p class="text-xs text-slate-400">Akses ruang dagang Anda untuk mengelola hasil karya.</p>
+                </div>
+                <form id="student-login-form-modal" onsubmit="handleStudentLoginModal(event)" class="space-y-3.5">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Nama Kreator Anda *</label>
+                        <select id="login-username-modal" required class="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs bg-white">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Kata Sandi Akses *</label>
+                        <input type="password" id="login-password-modal" required placeholder="Masukkan kata sandi..." class="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs bg-slate-50/50">
+                        <div class="bg-teal-50/50 rounded-lg p-2 mt-2 border border-teal-100 flex items-center gap-1.5 text-[10px] text-teal-800">
+                            <i data-lucide="info" class="w-3.5 h-3.5 text-teal-500 shrink-0"></i>
+                            <span>Sandi akses demo: <strong>YCAP123</strong></span>
+                        </div>
+                    </div>
+                    <div id="login-error-msg-modal" class="text-xs text-rose-500 font-semibold hidden text-center bg-rose-50 p-2 rounded-xl border border-rose-100">
+                        Kata sandi salah! Silakan coba lagi.
+                    </div>
+                    <button type="submit" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition shadow shadow-teal-100 flex items-center justify-center gap-1.5">
+                        <i data-lucide="log-in" class="w-4 h-4"></i> Verifikasi & Masuk
+                    </button>
+                </form>
+            </div>
+
+            <!-- Profile Info Card (Tampil jika sudah login) -->
+            <div id="auth-profile-info" class="space-y-4 hidden text-center py-4">
+                <div class="mx-auto w-16 h-16 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-2xl" id="auth-profile-avatar">
+                    U
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-base" id="auth-profile-name">Nama Pengguna</h3>
+                    <p class="text-xs text-slate-400 uppercase font-bold tracking-wider" id="auth-profile-role">Peran: Pembeli</p>
+                    <p class="text-xs text-slate-500 mt-2 italic bg-slate-50 p-2.5 rounded-xl" id="auth-profile-detail">Alamat: -</p>
+                </div>
+                <div class="pt-2 border-t border-slate-100">
+                    <button onclick="handleLogout()" class="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl text-xs transition border border-rose-100 flex items-center justify-center gap-1.5">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Keluar dari Sesi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= JAVASCRIPT PROGRAM LOGIC ================= -->
+    <script>
+        const creators = [
+            { id: "frans", name: "Frans Alex Werinusa", class: "XI", story: "Saya menyukai donat kentang lembut buatan sendiri yang lezat dan berenergi.", role: "Penjual Terbaik", avatarColor: "bg-amber-100 text-amber-700" },
+            { id: "bram", name: "Bram Hendrik Sauyai", class: "X", story: "Keripik pisang coklat lumer dengan resep rahasia keluarga kami yang sangat digemari.", role: "Inovator Muda", avatarColor: "bg-sky-100 text-sky-700" },
+            { id: "elkanus", name: "Elkanus Ambafen", class: "XI", story: "Membuat lilin aromaterapi yang harum dan memberikan ketenangan luar biasa.", role: "Artisan Lilin", avatarColor: "bg-purple-100 text-purple-700" },
+            { id: "markus", name: "Markus Yoel Dimara", class: "XII", story: "Mendesain totebag dan stiker berkualitas tinggi dengan ilustrasi digital artistik.", role: "Desainer Utama", avatarColor: "bg-emerald-100 text-emerald-700" },
+            { id: "donal", name: "Donal Penyel Gaman", class: "XI", story: "Fokus pada kreativitas produk inovatif bernilai guna tinggi.", role: "Kreator Muda", avatarColor: "bg-indigo-100 text-indigo-700" },
+            { id: "febrio", name: "Febrio Laurens Dimara", class: "X", story: "Mengembangkan kerajinan dekoratif ramah lingkungan.", role: "Kreator Muda", avatarColor: "bg-rose-100 text-rose-700" },
+            { id: "hengki", name: "Hengki Bernat Mayor", class: "XI", story: "Senang meramu rasa baru untuk camilan sehat sekolah.", role: "Kreator Muda", avatarColor: "bg-teal-100 text-teal-700" },
+            { id: "charles", name: "Charles Ian Kabes", class: "XII", story: "Merancang identitas kemasan kreatif agar produk menarik dipandang.", role: "Desainer Grafis", avatarColor: "bg-orange-100 text-orange-700" },
+            { id: "aris", name: "Aris Darmawan Dimara", class: "X", story: "Membuat variasi minuman segar yang sehat dan disukai teman-teman.", role: "Kreator Muda", avatarColor: "bg-amber-100 text-amber-700" },
+            { id: "markus_f", name: "Markus Fandek Hara", class: "XI", story: "Berkomitmen pada rasa autentik makanan Nusantara.", role: "Kreator Muda", avatarColor: "bg-blue-100 text-blue-700" },
+            { id: "huggo", name: "Huggo Israel Sanadi", class: "XII", story: "Melakukan riset produk kreatif berbasis kerajinan tangan.", role: "Pionir Kreatif", avatarColor: "bg-purple-100 text-purple-700" },
+            { id: "marfel", name: "Marfel Kundrat Mambrasar", class: "XI", story: "Mengemas produk tradisional menjadi sajian modern bernilai tinggi.", role: "Kreator Muda", avatarColor: "bg-sky-100 text-sky-700" },
+            { id: "david", name: "David Mambrasar", class: "X", story: "Senang mengeksplorasi pembuatan sabun handmade alami berkualitas.", role: "Artisan Sabun", avatarColor: "bg-emerald-100 text-emerald-700" },
+            { id: "beto", name: "Beto Crosto Nataniel Burdam", class: "XI", story: "Memasarkan karya orisinal siswa agar menjangkau area lebih luas.", role: "Kreator Muda", avatarColor: "bg-red-100 text-red-700" },
+            { id: "naindes", name: "Naindes Alberto Sauyai", class: "XII", story: "Mengembangkan produk digital & fisik yang menunjang kegiatan belajar.", role: "Inovator Muda", avatarColor: "bg-zinc-100 text-zinc-700" },
+            { id: "uziel", name: "Uziel Mambraku", class: "X", story: "Pembuat aneka kue basah tradisional dengan sentuhan rasa modern.", role: "Kreator Muda", avatarColor: "bg-pink-100 text-pink-700" },
+            { id: "febrian_m", name: "Febrian Manuk", class: "XI", story: "Suka berkreasi dengan bahan ramah lingkungan untuk dekorasi.", role: "Kreator Muda", avatarColor: "bg-violet-100 text-violet-700" },
+            { id: "candra", name: "Candra Luis Amanau", class: "XII", story: "Menciptakan sistem promosi kreatif untuk bazaar kelas.", role: "Kreator Muda", avatarColor: "bg-cyan-100 text-cyan-700" },
+            { id: "audea", name: "Audea Arwarkon", class: "X", story: "Sangat antusias meramu aroma relaksasi bunga pada lilin hias.", role: "Kreator Muda", avatarColor: "bg-lime-100 text-lime-700" },
+            { id: "atin", name: "Atin Cornelia Bonsapia", class: "XI", story: "Mendesain stiker-stiker aesthetic bertema motivasi belajar.", role: "Kreator Muda", avatarColor: "bg-yellow-100 text-yellow-700" },
+            { id: "fanita", name: "Fanita Mince Burdam", class: "XII", story: "Memastikan kualitas produk terbaik sebelum didistribusikan.", role: "Kreator Muda", avatarColor: "bg-rose-100 text-rose-700" },
+            { id: "elosabet", name: "Elosabet Petronela Arwakon", class: "XI", story: "Membuat kerajinan rajutan tangan untuk gantungan kunci lucu.", role: "Kreator Muda", avatarColor: "bg-amber-100 text-amber-700" },
+            { id: "sarinande", name: "Sarinande Putri Amelia Abaire", class: "XII", story: "Fokus pada kreasi totebag berbahan kain organik.", role: "Kreator Muda", avatarColor: "bg-purple-100 text-purple-700" },
+            { id: "netta", name: "Netta Dlovia Mambrasar", class: "X", story: "Menghadirkan kudapan ringan renyah bebas pengawet.", role: "Kreator Muda", avatarColor: "bg-teal-100 text-teal-700" },
+            { id: "febi", name: "Febi Katrince Sauyai", class: "XI", story: "Terinspirasi oleh keindahan alam Papua dalam membuat motif desain.", role: "Kreator Muda", avatarColor: "bg-sky-100 text-sky-700" },
+            { id: "lohoni", name: "Lohoni Arwakon", class: "XII", story: "Memproduksi sabun herbal alami yang lembut untuk kulit sensitif.", role: "Kreator Muda", avatarColor: "bg-emerald-100 text-emerald-700" },
+            { id: "mahli", name: "Mahli Mira Sauyai", class: "X", story: "Menyediakan minuman sehat berbahan jahe dan sereh segar.", role: "Kreator Muda", avatarColor: "bg-orange-100 text-orange-700" },
+            { id: "diktri", name: "Diktri Flora Cornelia Umpain", class: "XI", story: "Membuat puding buah segar dengan kombinasi susu manis.", role: "Kreator Muda", avatarColor: "bg-indigo-100 text-indigo-700" },
+            { id: "yucha", name: "Yucha Florensia Burdam", class: "XII", story: "Mendesain kaos eksklusif bertema persahabatan antar siswa.", role: "Kreator Muda", avatarColor: "bg-pink-100 text-pink-700" },
+            { id: "maryantina", name: "Maryantina Papuani Waropen", class: "XI", story: "Mengeksplorasi rasa-rasa unik untuk donat kentang.", role: "Kreator Muda", avatarColor: "bg-blue-100 text-blue-700" },
+            { id: "yuyun", name: "Yuyun Mesita Rudisman", class: "X", story: "Ahli dalam mengolah pisang menjadi camilan krispi beraneka rasa.", role: "Kreator Muda", avatarColor: "bg-teal-100 text-teal-700" },
+            { id: "maryane", name: "Maryane Mambraku", class: "XII", story: "Mendedikasikan waktu luang untuk membuat anyaman tempat pensil.", role: "Kreator Muda", avatarColor: "bg-purple-100 text-purple-700" },
+            { id: "delila", name: "Delila Awom", class: "XI", story: "Memformulasikan wewangian jasmine alami untuk produk spa harian.", role: "Kreator Muda", avatarColor: "bg-yellow-100 text-yellow-700" },
+            { id: "mutiara", name: "Mutiara Ayorbaba", class: "X", story: "Membuat kue kering renyah dengan bahan bebas gluten.", role: "Kreator Muda", avatarColor: "bg-amber-100 text-amber-700" },
+            { id: "adelfia", name: "Adelfia Ayelo", class: "XII", story: "Membantu mendesain ilustrasi kemasan modern bagi stand kelas.", role: "Kreator Muda", avatarColor: "bg-violet-100 text-violet-700" },
+            { id: "nataniel", name: "Nataniel Somin Dimara", class: "XI", story: "Fokus mengembangkan olahan singkong bercitarasa pedas manis.", role: "Kreator Muda", avatarColor: "bg-rose-100 text-rose-700" },
+            { id: "yoses", name: "Yoses Vence Siori", class: "X", story: "Suka berinovasi membuat kemasan ramah lingkungan dari daun pisang.", role: "Kreator Muda", avatarColor: "bg-slate-100 text-slate-700" },
+            { id: "muhamad", name: "Muhamad H.R Faisal Tanjung", class: "XII", story: "Fokus pada jaminan mutu dan standar kebersihan seluruh produk.", role: "Kreator Muda", avatarColor: "bg-blue-100 text-blue-700" },
+            { id: "yeheskia", name: "Yeheskia Riko Mambrasar", class: "XI", story: "Terbiasa mengolah bahan kelapa menjadi minyak aromatik.", role: "Kreator Muda", avatarColor: "bg-cyan-100 text-cyan-700" },
+            { id: "febrian_d", name: "Febrian Dimara", class: "X", story: "Ahli meracik coklat cair yang kental untuk pelapis jajanan.", role: "Kreator Muda", avatarColor: "bg-amber-100 text-amber-700" },
+            { id: "melvin", name: "Melvin Salmon Kalami", class: "XII", story: "Membuat miniatur kayu estetik yang unik untuk gantungan kunci.", role: "Kreator Muda", avatarColor: "bg-emerald-100 text-emerald-700" },
+            { id: "alvaro", name: "Alvaro Esau Felix Dimara", class: "XI", story: "Suka membuat es kopi susu gula aren yang menyegarkan dahaga.", role: "Kreator Muda", avatarColor: "bg-sky-100 text-sky-700" },
+            { id: "ledrik", name: "Ledrik Otniel Mamarodi", class: "X", story: "Menggemari seni cetak saring sablon manual pada media kain.", role: "Kreator Muda", avatarColor: "bg-zinc-100 text-zinc-700" },
+            { id: "nicodemus", name: "Nicodemus Mambrasar", class: "XI", story: "Membuat lilin aroma terapi mawar yang harum semerbak.", role: "Kreator Muda", avatarColor: "bg-red-100 text-red-700" },
+            { id: "gerson", name: "Gerson Wawiyai", class: "XII", story: "Fokus menyalurkan bakat kreatif pada produk anyaman bambu.", role: "Kreator Muda", avatarColor: "bg-indigo-100 text-indigo-700" },
+            { id: "marco", name: "Marco Geboy Mayor", class: "X", story: "Menciptakan keripik ubi jalar ungu renyah dengan saus madu.", role: "Kreator Muda", avatarColor: "bg-purple-100 text-purple-700" },
+            { id: "aingle", name: "Aingle Margareta Siori", class: "XI", story: "Membuat hiasan manik-manik indah untuk pelengkap busana sekolah.", role: "Kreator Muda", avatarColor: "bg-pink-100 text-pink-700" },
+            { id: "gloria", name: "Gloria Putri Enjel Dimara", class: "XII", story: "Mendedikasikan karya gambar tangannya pada motif tas kanvas.", role: "Kreator Muda", avatarColor: "bg-orange-100 text-orange-700" },
+            { id: "inggrit", name: "Inggrit Sintike Kaloli", class: "XI", story: "Meramu lilin aroma lily dengan ketahanan wangi hingga puluhan jam.", role: "Kreator Muda", avatarColor: "bg-teal-100 text-teal-700" },
+            { id: "neda", name: "Neda Amina Rudisman", class: "XII", story: "Merancang aneka camilan pedas gurih kesukaan murid saat istirahat.", role: "Kreator Muda", avatarColor: "bg-rose-100 text-rose-700" },
+            { id: "yudris", name: "Yudris Enjel Levina Mundo", class: "X", story: "Menyukai seni desain minimalis yang diterapkan pada stiker dekorasi.", role: "Kreator Muda", avatarColor: "bg-blue-100 text-blue-700" },
+            { id: "herlina", name: "Herlina Marlince Dimara", class: "XI", story: "Fokus mengembangkan sabun handmade dengan ekstrak kelapa murni.", role: "Kreator Muda", avatarColor: "bg-emerald-100 text-emerald-700" },
+            { id: "leberina", name: "Leberina Mambrasar", class: "XII", story: "Terinspirasi membuat kerajinan rajutan untuk tempat koin praktis.", role: "Kreator Muda", avatarColor: "bg-purple-100 text-purple-700" },
+            { id: "aksamina", name: "Aksamina Mery Mambrasar", class: "X", story: "Pembuat kue bolu gulung lembut rasa pandan alami.", role: "Kreator Muda", avatarColor: "bg-yellow-100 text-yellow-700" },
+            { id: "ferosa", name: "Ferosa Laura Making", class: "XI", story: "Membuat lilin hias bertema sakura jepang yang sangat indah.", role: "Kreator Muda", avatarColor: "bg-pink-100 text-pink-700" },
+            { id: "jeni", name: "Jeni Apriance Mamarodi", class: "XII", story: "Membuat jus segar perpaduan melon dan nanas asli tanpa pemanis buatan.", role: "Kreator Muda", avatarColor: "bg-lime-100 text-lime-700" },
+            { id: "shonia", name: "Shonia Dimara", class: "X", story: "Mendesain kaos sekolah dengan sablon motif flora yang indah.", role: "Kreator Muda", avatarColor: "bg-violet-100 text-violet-700" },
+            { id: "yulanda", name: "Yulanda Ester Mesly Mambrasar", class: "XI", story: "Menciptakan wangi melati yang segar dan tenang pada produk sabun.", role: "Kreator Muda", avatarColor: "bg-teal-100 text-teal-700" },
+            { id: "pascalyta", name: "Pascalyta Olivia Kambu", class: "XII", story: "Membuat kemasan produk karton daur ulang yang tebal dan estetik.", role: "Kreator Muda", avatarColor: "bg-slate-100 text-slate-700" }
+        ];
+
+        let products = [
+            // FOOD CATEGORY (Makanan & Kue)
+            { id: 1, name: "Donat Kentang Lembut", category: "Makanan", subCategory: "Donat", price: 5000, emoji: "🍩", creatorId: "frans", stock: 25, salesCount: 42, likes: 18, reviews: [{ name: "Siti", rating: 5, comment: "Donatnya enak banget dan lembut!" }, { name: "Roni", rating: 4, comment: "Gula halusnya lumer pas digigit." }], isPromo: true },
+            { id: 2, name: "Roti Kasur Keju", category: "Makanan", subCategory: "Roti", price: 15000, emoji: "🍞", creatorId: "frans", stock: 12, salesCount: 15, likes: 8, reviews: [{ name: "Andi", rating: 5, comment: "Isi kejunya gak pelit, worth it banget!" }], isPromo: false },
+            { id: 11, name: "Kue Cubit Lembut Pandan", category: "Makanan", subCategory: "Kue Basah", price: 8000, emoji: "🥞", creatorId: "uziel", stock: 20, salesCount: 37, likes: 19, reviews: [{ name: "Adit", rating: 5, comment: "Rasa pandannya alami dan kuenya setengah matang mantap!" }], isPromo: false },
+            { id: 12, name: "Bolu Gulung Pelangi", category: "Makanan", subCategory: "Kue Bolu", price: 12000, emoji: "🍰", creatorId: "aksamina", stock: 15, salesCount: 29, likes: 14, reviews: [{ name: "Eka", rating: 5, comment: "Teksturnya super lembut, anak-anak suka sekali." }], isPromo: false },
+            { id: 13, name: "Kue Sus Isi Vla Vanila", category: "Makanan", subCategory: "Kue Sus", price: 6000, emoji: "🧁", creatorId: "uziel", stock: 18, salesCount: 54, likes: 22, reviews: [{ name: "Lina", rating: 5, comment: "Vlanya lumer dan gak kemanisan. Pas!" }], isPromo: true },
+            { id: 14, name: "Kue Semprit Mentega Klasik", category: "Makanan", subCategory: "Kue Kering", price: 20000, emoji: "🍪", creatorId: "mutiara", stock: 10, salesCount: 18, likes: 11, reviews: [], isPromo: false },
+            { id: 15, name: "Risoles Ragout Ayam Wortel", category: "Makanan", subCategory: "Gorengan", price: 5000, emoji: "🥟", creatorId: "markus_f", stock: 25, salesCount: 40, likes: 15, reviews: [{ name: "Deni", rating: 4, comment: "Kulitnya krispi, isian ragoutnya gurih!" }], isPromo: false },
+            
+            // SNACK CATEGORY (Camilan)
+            { id: 3, name: "Keripik Pisang Coklat Lumer", category: "Camilan", subCategory: "Keripik", price: 12000, emoji: "🍌", creatorId: "bram", stock: 30, salesCount: 65, likes: 29, reviews: [{ name: "Beni", rating: 5, comment: "Coklatnya lumer tebal, nagih!" }, { name: "Dewi", rating: 5, comment: "Keren renyah pisangnya!" }], isPromo: true },
+            { id: 4, name: "Keripik Singkong Balado", category: "Camilan", subCategory: "Keripik", price: 8000, emoji: "🥔", creatorId: "bram", stock: 20, salesCount: 22, likes: 12, reviews: [{ name: "Adi", rating: 4, comment: "Rasa pedas manis pas banget!" }], isPromo: false },
+            { id: 16, name: "Keripik Ubi Ungu Krispi", category: "Camilan", subCategory: "Keripik", price: 9000, emoji: "🍠", creatorId: "marco", stock: 22, salesCount: 45, likes: 20, reviews: [{ name: "Fajar", rating: 5, comment: "Ubi ungunya manis alami dan renyah sekali." }], isPromo: false },
+            { id: 17, name: "Makaroni Pedas", category: "Camilan", subCategory: "Makaroni", price: 6000, emoji: "🍿", creatorId: "neda", stock: 40, salesCount: 92, likes: 38, reviews: [{ name: "Rian", rating: 5, comment: "Pecinta pedas wajib coba ini! Rasanya gurih mantap." }], isPromo: false },
+            { id: 18, name: "Basreng (Bakso Goreng)", category: "Camilan", subCategory: "Basreng", price: 7000, emoji: "🍟", creatorId: "nataniel", stock: 35, salesCount: 81, likes: 30, reviews: [{ name: "Siska", rating: 5, comment: "Pedas asin gurihnya nampol banget!" }], isPromo: true },
+            { id: 39, name: "Stik Keju", category: "Camilan", subCategory: "Stik Keju", price: 10000, emoji: "🧀", creatorId: "netta", stock: 25, salesCount: 30, likes: 14, reviews: [{ name: "Hendra", rating: 5, comment: "Kejunya terasa banget dan renyah sekali!" }], isPromo: false },
+            { id: 40, name: "Keripik Kentang", category: "Camilan", subCategory: "Keripik", price: 12000, emoji: "🥔", creatorId: "yuyun", stock: 20, salesCount: 45, likes: 21, reviews: [{ name: "Sari", rating: 5, comment: "Kriuknya dapet, bumbunya pas merata." }], isPromo: false },
+            { id: 41, name: "Kacang Bawang", category: "Camilan", subCategory: "Kacang", price: 8000, emoji: "🧆", creatorId: "hengki", stock: 30, salesCount: 55, likes: 18, reviews: [{ name: "Lukas", rating: 5, comment: "Kacangnya empuk, wangi bawang putihnya berasa banget!" }], isPromo: false },
+
+            // DRINKS CATEGORY (Minuman)
+            { id: 5, name: "Teh Pucuk Harum", category: "Minuman", subCategory: "Teh", price: 4000, emoji: "🥤", creatorId: "aris", stock: 50, salesCount: 120, likes: 34, reviews: [{ name: "Tono", rating: 5, comment: "Dingin-dingin seger banget!" }], isPromo: false },
+            { id: 6, name: "Ultra Milk Cokelat", category: "Minuman", subCategory: "Susu", price: 7000, emoji: "🥛", creatorId: "frans", stock: 40, salesCount: 88, likes: 26, reviews: [], isPromo: false },
+            { id: 19, name: "Es Kopi Susu Aren Segar", category: "Minuman", subCategory: "Kopi", price: 10000, emoji: "☕", creatorId: "alvaro", stock: 30, salesCount: 75, likes: 32, reviews: [{ name: "Heri", rating: 5, comment: "Kopinya mantap, manisnya pas dari gula aren murni." }], isPromo: false },
+            { id: 31, name: "Teh Botol Sosro", category: "Minuman", subCategory: "Teh", price: 5000, emoji: "🧃", creatorId: "aris", stock: 35, salesCount: 64, likes: 18, reviews: [{ name: "Gita", rating: 5, comment: "Rasa teh aslinya klasik banget, legendaris!" }], isPromo: false },
+            { id: 32, name: "Ultra Milk Stroberi", category: "Minuman", subCategory: "Susu", price: 7000, emoji: "🍓", creatorId: "frans", stock: 25, salesCount: 42, likes: 19, reviews: [], isPromo: false },
+            { id: 33, name: "Milo UHT", category: "Minuman", subCategory: "Susu", price: 6000, emoji: "🍫", creatorId: "marfel", stock: 30, salesCount: 50, likes: 21, reviews: [{ name: "Robby", rating: 5, comment: "Suku coklat milo kesukaan buat energi belajar!" }], isPromo: false },
+            { id: 34, name: "Floridina Orange", category: "Minuman", subCategory: "Jus", price: 5000, emoji: "🍊", creatorId: "aris", stock: 40, salesCount: 95, likes: 30, reviews: [], isPromo: false },
+            { id: 35, name: "Buavita Mangga", category: "Minuman", subCategory: "Jus", price: 8000, emoji: "🥭", creatorId: "jeni", stock: 20, salesCount: 38, likes: 15, reviews: [{ name: "Lestari", rating: 5, comment: "Jus mangganya kental dan kaya vitamin!" }], isPromo: false },
+            { id: 36, name: "Pocari Sweat", category: "Minuman", subCategory: "Isotonik", price: 7000, emoji: "💧", creatorId: "mahli", stock: 30, salesCount: 71, likes: 22, reviews: [{ name: "Deni", rating: 5, comment: "Pas banget diminum habis olahraga di lapangan sekolah!" }], isPromo: false },
+            { id: 37, name: "Aqua", category: "Minuman", subCategory: "Air Mineral", price: 3000, emoji: "🥤", creatorId: "muhamad", stock: 100, salesCount: 250, likes: 40, reviews: [], isPromo: false },
+            { id: 38, name: "Good Day Cappuccino", category: "Minuman", subCategory: "Kopi", price: 6000, emoji: "☕", creatorId: "alvaro", stock: 35, salesCount: 82, likes: 28, reviews: [{ name: "Yudi", rating: 5, comment: "Ada choco granule-nya di atasnya, mantap!" }], isPromo: true },
+
+            // CRAFT/HANDICRAFTS CATEGORY (Kerajinan Tangan)
+            { id: 7, name: "Lilin Aromaterapi Lavender", category: "Kerajinan Tangan", subCategory: "Lilin Aromaterapi", price: 25000, emoji: "🕯️", creatorId: "elkanus", stock: 15, salesCount: 35, likes: 41, reviews: [{ name: "Sarah", rating: 5, comment: "Sangat menenangkan setelah belajar!" }, { name: "Indah", rating: 5, comment: "Wanginya harum lembut banget." }], isPromo: true },
+            { id: 8, name: "Totebag Ilustrasi Kanvas", category: "Kerajinan Tangan", subCategory: "Tote Bag", price: 45000, emoji: "👜", creatorId: "markus", stock: 8, salesCount: 19, likes: 33, reviews: [{ name: "Maya", rating: 5, comment: "Jahitannya rapi, gambarnya aesthetic!" }], isPromo: false },
+            { id: 9, name: "Stiker Kreatif Pack", category: "Kerajinan Tangan", subCategory: "Stiker", price: 5000, emoji: "🎨", creatorId: "markus", stock: 100, salesCount: 150, likes: 45, reviews: [{ name: "Gita", rating: 5, comment: "Lucu-lucu stikernya buat ditempel di laptop." }], isPromo: false },
+            { id: 10, name: "Sabun Lavender Handmade", category: "Kerajinan Tangan", subCategory: "Sabun", price: 18000, emoji: "🧼", creatorId: "elkanus", stock: 10, salesCount: 14, likes: 9, reviews: [], isPromo: false },
+            { id: 20, name: "Gelang Biji Genitri Alami", category: "Kerajinan Tangan", subCategory: "Gelang", price: 15000, emoji: "📿", creatorId: "yeheskia", stock: 25, salesCount: 18, likes: 12, reviews: [{ name: "Amir", rating: 5, comment: "Biji genitrinya rapi dan nyaman dipakai di tangan." }], isPromo: false },
+            { id: 21, name: "Kalung Liontin Kayu Resin", category: "Kerajinan Tangan", subCategory: "Kalung", price: 35000, emoji: "🔮", creatorId: "aingle", stock: 12, salesCount: 23, likes: 28, reviews: [{ name: "Keke", rating: 5, comment: "Kombinasi kayu dan resinnya cantik sekali!" }], isPromo: false },
+            { id: 22, name: "Gelang Kerang Pantai Estetik", category: "Kerajinan Tangan", subCategory: "Gelang", price: 12000, emoji: "🐚", creatorId: "aingle", stock: 30, salesCount: 40, likes: 25, reviews: [{ name: "Hana", rating: 5, comment: "Unik, kerang pantainya berkilau cantik." }], isPromo: false },
+            { id: 23, name: "Gantungan Kunci Amigurumi", category: "Kerajinan Tangan", subCategory: "Gantungan Kunci", price: 8000, emoji: "🧸", creatorId: "elosabet", stock: 15, salesCount: 48, likes: 31, reviews: [{ name: "Nila", rating: 5, comment: "Bentuk rajutannya lucu banget, suka sekali!" }], isPromo: false },
+            { id: 24, name: "Gantungan Kunci Kayu Ukir", category: "Kerajinan Tangan", subCategory: "Gantungan Kunci", price: 10000, emoji: "🔑", creatorId: "melvin", stock: 40, salesCount: 62, likes: 19, reviews: [{ name: "Vino", rating: 4, comment: "Ukiran kayunya detail dan kayunya cukup tebal." }], isPromo: false },
+            { id: 25, name: "Ransel Kanvas Lukis Custom", category: "Kerajinan Tangan", subCategory: "Ransel", price: 85000, emoji: "🎒", creatorId: "gloria", stock: 5, salesCount: 11, likes: 17, reviews: [{ name: "Devi", rating: 5, comment: "Lukisannya awet, tasnya muat buku paket sekolah banyak." }], isPromo: false },
+            { id: 26, name: "Ransel Serut Tie-Dye Organik", category: "Kerajinan Tangan", subCategory: "Ransel", price: 30000, emoji: "🎒", creatorId: "sarinande", stock: 12, salesCount: 22, likes: 14, reviews: [{ name: "Rico", rating: 4, comment: "Motif tie-dyenya keren dan kekinian." }], isPromo: false },
+            { id: 27, name: "Lampu Tidur Estetik Bambu", category: "Kerajinan Tangan", subCategory: "Dekorasi", price: 65000, emoji: "🏮", creatorId: "febrian_m", stock: 6, salesCount: 8, likes: 21, reviews: [{ name: "Beni", rating: 5, comment: "Sorotan cahayanya estetik banget di kamar tidur." }], isPromo: true },
+            { id: 28, name: "Notebook Sampul Daur Ulang", category: "Kerajinan Tangan", subCategory: "Alat Tulis", price: 18000, emoji: "📓", creatorId: "pascalyta", stock: 20, salesCount: 35, likes: 16, reviews: [{ name: "Novi", rating: 5, comment: "Ramah lingkungan dan kertasnya asyik buat menggambar." }], isPromo: false },
+            { id: 29, name: "Pembatas Buku Pressed Flower", category: "Kerajinan Tangan", subCategory: "Alat Tulis", price: 5000, emoji: "🔖", creatorId: "febrian_m", stock: 50, salesCount: 88, likes: 39, reviews: [{ name: "Tari", rating: 5, comment: "Bunga aslinya awet dalam laminasi. Cantik banget!" }], isPromo: false },
+            { id: 30, name: "Pot Tanaman Lukis Terakota", category: "Kerajinan Tangan", subCategory: "Dekorasi", price: 22000, emoji: "🪴", creatorId: "febrian_m", stock: 15, salesCount: 14, likes: 11, reviews: [], isPromo: false }
+        ];
+
+        let cart = [];
+        let favorites = [];
+        let selectedProductForDetail = null;
+        let selectedCategoryFilterChip = 'all';
+        let salesChartInstance = null;
+        let qrCodeInstance = null;
+
+        // AUTHENTICATION SESSIONS
+        let loggedInStudent = null; // Menyimpan info Siswa Kreator yang login
+        let loggedInBuyer = null;   // Menyimpan info Pembeli yang login
+        let activeAuthTab = 'pembeli'; // Default tab pada Modal Autentikasi
+
+        // On document load
+        window.onload = function() {
+            lucide.createIcons();
+            initializeCreatorsFilters();
+            initializeLoginDropdowns();
+            renderTopCreatorsList();
+            renderBestSellers();
+            renderNewArrivals();
+            renderCatalog();
+            initializeChart();
+            
+            // Set first tab to Home
+            switchTab('home');
+        };
+
+        // Tab switching logic
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            // Show target tab
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            // Manage nav button active classes
+            document.querySelectorAll('.nav-link-btn').forEach(btn => {
+                btn.classList.remove('text-teal-600', 'font-semibold');
+                btn.classList.add('text-slate-600', 'font-medium');
+            });
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('text-teal-600', 'font-semibold');
+                activeBtn.classList.remove('text-slate-600', 'font-medium');
+            }
+
+            if (tabId === 'dashboard') {
+                renderDashboard();
+            }
+        }
+
+        // Auto scroll helper
+        function scrollToEvents() {
+            switchTab('home');
+            document.getElementById('events-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Redirect and dynamic filter catalog by creator
+        function filterByCreator(creatorId) {
+            switchTab('catalog');
+            document.getElementById('creator-filter').value = creatorId;
+            applyFilters();
+            document.getElementById('tab-catalog').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize Creator Filters dropdown in Catalog
+        function initializeCreatorsFilters() {
+            const dropdown = document.getElementById('creator-filter');
+            dropdown.innerHTML = '<option value="all">Semua Siswa</option>';
+            const sortedCreators = [...creators].sort((a, b) => a.name.localeCompare(b.name));
+            sortedCreators.forEach(creator => {
+                const opt = document.createElement('option');
+                opt.value = creator.id;
+                opt.textContent = `${creator.name} (${creator.class})`;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        // Initialize Login dropdowns dynamically (A-Z)
+        function initializeLoginDropdowns() {
+            const dropdownModal = document.getElementById('login-username-modal');
+            dropdownModal.innerHTML = '<option value="" disabled selected>Siapa nama Anda?</option>';
+            
+            const sortedCreators = [...creators].sort((a, b) => a.name.localeCompare(b.name));
+            sortedCreators.forEach(creator => {
+                const opt = document.createElement('option');
+                opt.value = creator.id;
+                opt.textContent = `${creator.name} (${creator.class})`;
+                dropdownModal.appendChild(opt);
+            });
+        }
+
+        // ================= SYSTEM AUTHENTICATION LOGIC =================
+        function openAuthModal(defaultTab = null) {
+            const modal = document.getElementById('auth-modal');
+            
+            // Check if any user session is already active
+            if (loggedInStudent || loggedInBuyer) {
+                // Show profile info view in modal instead of login forms
+                document.getElementById('auth-tab-container').classList.add('hidden');
+                document.getElementById('auth-form-pembeli').classList.add('hidden');
+                document.getElementById('auth-form-siswa').classList.add('hidden');
+                document.getElementById('auth-profile-info').classList.remove('hidden');
+
+                const avatar = document.getElementById('auth-profile-avatar');
+                const name = document.getElementById('auth-profile-name');
+                const role = document.getElementById('auth-profile-role');
+                const detail = document.getElementById('auth-profile-detail');
+
+                if (loggedInStudent) {
+                    avatar.textContent = loggedInStudent.name.charAt(0);
+                    avatar.className = "mx-auto w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-2xl border border-emerald-200";
+                    name.textContent = loggedInStudent.name;
+                    role.textContent = "Kreator Siswa";
+                    detail.textContent = `Kelas ${loggedInStudent.class} • Peran: ${loggedInStudent.role}`;
+                } else if (loggedInBuyer) {
+                    avatar.textContent = loggedInBuyer.name.charAt(0);
+                    avatar.className = "mx-auto w-16 h-16 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-2xl border border-teal-200";
+                    name.textContent = loggedInBuyer.name;
+                    role.textContent = "Pembeli Terdaftar";
+                    detail.textContent = `Alamat Pengiriman: ${loggedInBuyer.address}`;
+                }
+            } else {
+                // Show form log in
+                document.getElementById('auth-tab-container').classList.remove('hidden');
+                document.getElementById('auth-profile-info').classList.add('hidden');
+                
+                if (defaultTab) {
+                    switchAuthTab(defaultTab);
+                } else {
+                    switchAuthTab(activeAuthTab);
+                }
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+
+        function switchAuthTab(tab) {
+            activeAuthTab = tab;
+            const tabPembeli = document.getElementById('auth-tab-pembeli');
+            const tabSiswa = document.getElementById('auth-tab-siswa');
+            const formPembeli = document.getElementById('auth-form-pembeli');
+            const formSiswa = document.getElementById('auth-form-siswa');
+
+            if (tab === 'pembeli') {
+                tabPembeli.className = "py-2.5 text-xs font-bold rounded-xl transition-all bg-white text-slate-800 shadow-sm flex items-center justify-center gap-1.5";
+                tabSiswa.className = "py-2.5 text-xs font-bold rounded-xl transition-all text-slate-500 flex items-center justify-center gap-1.5";
+                formPembeli.classList.remove('hidden');
+                formSiswa.classList.add('hidden');
+            } else {
+                tabSiswa.className = "py-2.5 text-xs font-bold rounded-xl transition-all bg-white text-slate-800 shadow-sm flex items-center justify-center gap-1.5";
+                tabPembeli.className = "py-2.5 text-xs font-bold rounded-xl transition-all text-slate-500 flex items-center justify-center gap-1.5";
+                formSiswa.classList.remove('hidden');
+                formPembeli.classList.add('hidden');
+            }
+        }
+
+        // Handle Log in Pembeli
+        function handleBuyerLogin(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('buyer-name-input').value.trim();
+            const addressInput = document.getElementById('buyer-address-input').value.trim();
+
+            if (!nameInput || !addressInput) return;
+
+            // Save buyer session
+            loggedInBuyer = {
+                name: nameInput,
+                address: addressInput
+            };
+
+            // Clear any active student session to prevent overlap
+            loggedInStudent = null;
+
+            // Pre-fill checkout form automatically
+            document.getElementById('order-name').value = loggedInBuyer.name;
+            document.getElementById('order-address').value = loggedInBuyer.address;
+            document.getElementById('checkout-auth-alert').classList.add('hidden');
+
+            updateNavigationProfileUI();
+            closeAuthModal();
+            showToast(`👋 Selamat Datang, Pembeli Kak ${loggedInBuyer.name}!`);
+            
+            // Refresh views
+            renderDashboard();
+        }
+
+        // Handle Log in Siswa (Modal)
+        function handleStudentLoginModal(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username-modal').value;
+            const pass = document.getElementById('login-password-modal').value;
+
+            if (pass === 'YCAP123') {
+                loggedInStudent = creators.find(c => c.id === username);
+                if (loggedInStudent) {
+                    document.getElementById('login-error-msg-modal').classList.add('hidden');
+                    document.getElementById('login-password-modal').value = '';
+                    
+                    // Clear buyer session to prevent overlap
+                    loggedInBuyer = null;
+
+                    updateNavigationProfileUI();
+                    closeAuthModal();
+                    showToast(`🔓 Akses Diterima! Selamat bekerja, Kak ${loggedInStudent.name}.`);
+                    switchTab('dashboard');
+                }
+            } else {
+                const errorBox = document.getElementById('login-error-msg-modal');
+                errorBox.classList.remove('hidden');
+                showToast("❌ Sandi akses salah! Gunakan sandi YCAP123");
+            }
+        }
+
+        // Update Navigation Bar Profile Button UI
+        function updateNavigationProfileUI() {
+            const btnName = document.getElementById('user-display-name');
+            const btnRole = document.getElementById('user-display-role');
+            const avatarBox = document.getElementById('user-avatar-placeholder');
+
+            if (loggedInStudent) {
+                btnName.textContent = loggedInStudent.name.split(' ')[0]; // Ambil nama panggilan
+                btnRole.textContent = "Siswa Kreator";
+                avatarBox.textContent = loggedInStudent.name.charAt(0);
+                avatarBox.className = "w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold border border-emerald-300";
+            } else if (loggedInBuyer) {
+                btnName.textContent = loggedInBuyer.name.split(' ')[0];
+                btnRole.textContent = "Pembeli";
+                avatarBox.textContent = loggedInBuyer.name.charAt(0);
+                avatarBox.className = "w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-xs font-bold border border-teal-300";
+            } else {
+                btnName.textContent = "Masuk";
+                btnRole.textContent = "Sesi Tamu";
+                avatarBox.innerHTML = '<i data-lucide="user" class="w-4 h-4"></i>';
+                avatarBox.className = "w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-xs font-bold border border-slate-200";
+                lucide.createIcons();
+            }
+        }
+
+        // Log out active user session (Dual Logout)
+        function handleLogout() {
+            loggedInStudent = null;
+            loggedInBuyer = null;
+
+            // Reset checkout inputs
+            document.getElementById('order-name').value = '';
+            document.getElementById('order-address').value = '';
+            document.getElementById('checkout-auth-alert').classList.remove('hidden');
+
+            updateNavigationProfileUI();
+            closeAuthModal();
+            showToast("🔒 Sesi Anda telah berhasil keluar.");
+            
+            // Reset and redirect
+            switchTab('home');
+            renderDashboard();
+        }
+
+        // Render Dashboard View (Login Lock Checker)
+        function renderDashboard() {
+            const loginView = document.getElementById('dashboard-login-view');
+            const mainView = document.getElementById('dashboard-main-view');
+
+            if (!loggedInStudent) {
+                loginView.classList.remove('hidden');
+                mainView.classList.add('hidden');
+            } else {
+                loginView.classList.add('hidden');
+                mainView.classList.remove('hidden');
+                
+                document.getElementById('dashboard-welcome-msg').textContent = `Selamat datang kembali, Kak ${loggedInStudent.name} (${loggedInStudent.class})!`;
+                document.getElementById('new-prod-creator-display').value = `${loggedInStudent.name} (${loggedInStudent.class})`;
+                
+                updateDashboardStats();
+            }
+        }
+
+        // Calculate and Update Dashboard Stats for Logged-In Student ONLY
+        function updateDashboardStats() {
+            if (!loggedInStudent) return;
+
+            const myProducts = products.filter(p => p.creatorId === loggedInStudent.id);
+            const totalRevenue = myProducts.reduce((sum, p) => sum + (p.price * p.salesCount), 0);
+            const totalSold = myProducts.reduce((sum, p) => sum + p.salesCount, 0);
+            const totalItemsRegistered = myProducts.length;
+
+            document.getElementById('dash-revenue').textContent = `Rp ${totalRevenue.toLocaleString('id-ID')}`;
+            document.getElementById('dash-sold').textContent = `${totalSold} Pcs`;
+            document.getElementById('dash-registered').textContent = `${totalItemsRegistered} Varian`;
+
+            // Update Grafik Penjualan Dinamis Sesuai Karakteristik Produk Mereka
+            if (salesChartInstance) {
+                const basePerformance = myProducts.reduce((arr, prod) => {
+                    const seed = prod.id;
+                    return arr.map((val, idx) => val + Math.round((prod.price * (prod.salesCount / 7)) * (0.5 + (Math.sin(idx + seed) / 2)) / 1000));
+                }, [10, 25, 15, 30, 20, 35, 45]);
+
+                salesChartInstance.data.datasets[0].data = basePerformance;
+                salesChartInstance.data.datasets[0].label = `Pendapatan Kak ${loggedInStudent.name} (Ribu Rp)`;
+                salesChartInstance.update();
+            }
+        }
+
+
+        // Render Top Sellers / Top Creators in Home
+        function renderTopCreatorsList() {
+            const container = document.getElementById('top-creators-list');
+            container.innerHTML = '';
+
+            const creatorStats = creators.map(c => {
+                const creativeProducts = products.filter(p => p.creatorId === c.id);
+                const totalSales = creativeProducts.reduce((sum, p) => sum + p.salesCount, 0);
+                const totalLikes = creativeProducts.reduce((sum, p) => sum + p.likes, 0);
+                return {
+                    ...c,
+                    totalSales,
+                    totalLikes,
+                    score: (totalSales * 2) + totalLikes
+                };
+            }).sort((a, b) => b.score - a.score);
+
+            creatorStats.forEach((creator, idx) => {
+                let badgeColor = "bg-slate-100 text-slate-700";
+                if (idx === 0) badgeColor = "bg-amber-100 text-amber-800 border border-amber-200";
+                if (idx === 1) badgeColor = "bg-slate-200 text-slate-800";
+                
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-3 rounded-xl border border-slate-50 hover:bg-slate-50 transition cursor-pointer" onclick="filterByCreator('${creator.id}')">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${badgeColor}">
+                                ${idx + 1}
+                            </span>
+                            <div class="w-9 h-9 rounded-full ${creator.avatarColor} flex items-center justify-center font-bold text-sm">
+                                ${creator.name.charAt(0)}
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800">${creator.name}</h4>
+                                <p class="text-[10px] text-slate-400 font-semibold">${creator.class} • ${creator.role}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-teal-600">${creator.totalSales} Terjual</p>
+                            <p class="text-[10px] text-rose-500 flex items-center gap-0.5 justify-end"><i data-lucide="heart" class="w-2.5 h-2.5 fill-current"></i> ${creator.totalLikes}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // Home products rendering (Best Sellers & New Arrivals)
+        function renderBestSellers() {
+            const grid = document.getElementById('best-sellers-grid');
+            grid.innerHTML = '';
+            const sorted = [...products].sort((a, b) => b.salesCount - a.salesCount).slice(0, 2);
+            sorted.forEach(p => {
+                grid.appendChild(createProductMiniCard(p, "🏆 Terlaris"));
+            });
+            lucide.createIcons();
+        }
+
+        // Render New Arrivals in Home
+        function renderNewArrivals() {
+            const grid = document.getElementById('new-arrivals-grid');
+            grid.innerHTML = '';
+            const sorted = [...products].slice(Math.max(products.length - 2, 0));
+            sorted.forEach(p => {
+                grid.appendChild(createProductMiniCard(p, "✨ Baru"));
+            });
+            lucide.createIcons();
+        }
+
+        // Custom Helper to build small card elements
+        function createProductMiniCard(p, badgeText) {
+            const creator = creators.find(c => c.id === p.creatorId);
+            const card = document.createElement('div');
+            card.className = "bg-white/95 backdrop-blur-sm border border-slate-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition duration-200 cursor-pointer";
+            card.onclick = () => openDetailModal(p.id);
+
+            const rating = getAverageRating(p);
+
+            card.innerHTML = `
+                <div class="w-16 h-16 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-3xl select-none shrink-0">
+                    ${p.emoji}
+                </div>
+                <div class="space-y-1 flex-grow">
+                    <div class="flex items-center gap-1.5">
+                        <span class="bg-amber-100 text-amber-800 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">${badgeText}</span>
+                        <p class="text-[10px] text-slate-400 font-semibold">${p.category}</p>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm leading-tight hover:text-teal-600 transition">${p.name}</h4>
+                    <p class="text-xs text-teal-600 font-bold">Rp ${p.price.toLocaleString('id-ID')}</p>
+                    <div class="flex items-center justify-between text-[10px] text-slate-400">
+                        <span>Oleh: <strong class="text-slate-600">${creator.name.split(' ')[0]}</strong></span>
+                        <span class="flex items-center gap-0.5 text-amber-500 font-bold"><i data-lucide="star" class="w-3 h-3 fill-current"></i> ${rating}</span>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Utility to compute average rating
+        function getAverageRating(p) {
+            if (!p.reviews || p.reviews.length === 0) return "5.0";
+            const total = p.reviews.reduce((sum, r) => sum + r.rating, 0);
+            return (total / p.reviews.length).toFixed(1);
+        }
+
+        // Filter catalog display based on search inputs
+        function applyFilters() {
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+            const categoryVal = document.getElementById('category-filter').value;
+            const creatorVal = document.getElementById('creator-filter').value;
+            const sortVal = document.getElementById('sort-filter').value;
+            const maxPrice = parseInt(document.getElementById('price-range').value);
+
+            let filtered = products.filter(p => {
+                const creator = creators.find(c => c.id === p.creatorId);
+                const matchText = p.name.toLowerCase().includes(searchVal) || 
+                                  p.category.toLowerCase().includes(searchVal) || 
+                                  creator.name.toLowerCase().includes(searchVal) ||
+                                  p.price.toString().includes(searchVal);
+                
+                const matchCategory = (categoryVal === 'all' || p.category === categoryVal) &&
+                                      (selectedCategoryFilterChip === 'all' || p.category === selectedCategoryFilterChip);
+
+                const matchCreator = creatorVal === 'all' || p.creatorId === creatorVal;
+                const matchPrice = p.price <= maxPrice;
+
+                return matchText && matchCategory && matchCreator && matchPrice;
+            });
+
+            if (sortVal === 'price-asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sortVal === 'price-desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (sortVal === 'rating-desc') {
+                filtered.sort((a, b) => getAverageRating(b) - getAverageRating(a));
+            }
+
+            renderFilteredCatalog(filtered);
+        }
+
+        function selectCategoryChip(category) {
+            selectedCategoryFilterChip = category;
+            
+            document.querySelectorAll('.category-chip').forEach(btn => {
+                btn.classList.remove('bg-teal-600', 'text-white', 'border-transparent');
+                btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+            });
+
+            const activeChip = document.querySelector(`.category-chip[data-category="${category}"]`);
+            if (activeChip) {
+                activeChip.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+                activeChip.classList.add('bg-teal-600', 'text-white', 'border-transparent');
+            }
+
+            applyFilters();
+        }
+
+        function updatePriceSlider(val) {
+            document.getElementById('price-range-label').textContent = `Rp ${parseInt(val).toLocaleString('id-ID')}`;
+            applyFilters();
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('category-filter').value = 'all';
+            document.getElementById('creator-filter').value = 'all';
+            document.getElementById('sort-filter').value = 'default';
+            document.getElementById('price-range').value = 150000;
+            document.getElementById('price-range-label').textContent = 'Rp 150.000';
+            
+            selectCategoryChip('all');
+        }
+
+        function renderCatalog() {
+            renderFilteredCatalog(products);
+        }
+
+        function renderFilteredCatalog(items) {
+            const grid = document.getElementById('catalog-products-grid');
+            grid.innerHTML = '';
+
+            document.getElementById('search-result-count').textContent = `Menampilkan ${items.length} produk dari total ${products.length} karya terdaftar.`;
+
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-slate-400 flex flex-col items-center justify-center gap-2">
+                        <i data-lucide="info" class="w-10 h-10"></i>
+                        <p class="font-medium text-sm">Produk tidak ditemukan. Silakan ganti kata kunci atau reset filter!</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            items.forEach(p => {
+                const creator = creators.find(c => c.id === p.creatorId);
+                const avgRating = getAverageRating(p);
+                const isFavorite = favorites.includes(p.id);
+                const heartClass = isFavorite ? 'text-rose-500 fill-rose-500' : 'text-slate-400 hover:text-rose-500';
+
+                const card = document.createElement('div');
+                card.className = "bg-white/95 backdrop-blur-sm border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between group";
+                
+                card.innerHTML = `
+                    <div class="relative">
+                        <div class="aspect-square bg-slate-50 flex items-center justify-center text-6xl group-hover:scale-105 transition duration-200 select-none relative cursor-pointer" onclick="openDetailModal(${p.id})">
+                            ${p.emoji}
+                            ${p.isPromo ? `<span class="absolute top-3 left-3 bg-amber-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Promo 10%</span>` : ''}
+                        </div>
+                        <button onclick="toggleFavorite(${p.id})" class="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:scale-110 transition">
+                            <i data-lucide="heart" class="w-4 h-4 ${heartClass}"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                        <div class="space-y-1">
+                            <span class="text-[9px] text-teal-600 font-bold bg-teal-50 px-2 py-0.5 rounded-full uppercase">${p.category}</span>
+                            <h3 class="font-extrabold text-slate-800 text-sm leading-tight cursor-pointer hover:text-teal-600 transition" onclick="openDetailModal(${p.id})">${p.name}</h3>
+                            <div class="flex items-center gap-1 text-amber-500 text-[10px] font-bold">
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i> ${avgRating} <span class="text-slate-400 font-normal">(${p.reviews.length} ulasan)</span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-50 pt-2 flex items-center justify-between">
+                            <div>
+                                <p class="text-[10px] text-slate-400 uppercase font-bold">Harga</p>
+                                <p class="text-base font-extrabold text-teal-600">Rp ${p.price.toLocaleString('id-ID')}</p>
+                            </div>
+                            <div class="text-right cursor-pointer" onclick="filterByCreator('${creator.id}')">
+                                <p class="text-[9px] text-slate-400 uppercase font-bold">Kreator</p>
+                                <p class="text-xs font-bold text-slate-700 hover:text-teal-500 transition">${creator.name.split(' ')[0]}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button onclick="openDetailModal(${p.id})" class="py-2 border border-slate-200 hover:border-teal-500 hover:text-teal-600 rounded-xl text-xs font-semibold transition text-slate-600">
+                                Detail Karya
+                            </button>
+                            <button onclick="addToCart(${p.id})" class="py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Beli
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // Open Detail Modal & Populate Data
+        function openDetailModal(productId) {
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+            selectedProductForDetail = p;
+
+            const creator = creators.find(c => c.id === p.creatorId);
+
+            document.getElementById('detail-title').textContent = p.name;
+            document.getElementById('detail-category-badge').textContent = p.category;
+            
+            if (p.isPromo) {
+                document.getElementById('detail-promo-badge').classList.remove('hidden');
+            } else {
+                document.getElementById('detail-promo-badge').classList.add('hidden');
+            }
+
+            document.getElementById('detail-emoji-large').textContent = p.emoji;
+            document.getElementById('detail-price').textContent = `Rp ${p.price.toLocaleString('id-ID')}`;
+            document.getElementById('detail-stock').textContent = `${p.stock} Pcs`;
+            document.getElementById('detail-desc').textContent = p.desc || `Karya orisinal buatan tangan ${creator.name} (${creator.class}) menggunakan bahan berkualitas terbaik yang dirakit secara presisi dan higienis.`;
+            
+            document.getElementById('detail-creator-name').textContent = creator.name;
+            document.getElementById('detail-creator-class').textContent = `Kelas ${creator.class} • ${creator.role}`;
+            document.getElementById('detail-creator-story').textContent = `"${creator.story}"`;
+            document.getElementById('detail-creator-avatar').textContent = creator.name.charAt(0);
+
+            // Generate QR Code dynamically
+            document.getElementById('product-qrcode').innerHTML = '';
+            qrCodeInstance = new QRCode(document.getElementById('product-qrcode'), {
+                text: `https://paradisemarket.sch.id/product/${p.id}`,
+                width: 90,
+                height: 90,
+                colorDark : "#0f766e",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            setReviewRating(5);
+            document.getElementById('new-review-name').value = '';
+            document.getElementById('new-review-comment').value = '';
+
+            renderReviewsList(p);
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        // Close Detail Modal
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+            selectedProductForDetail = null;
+        }
+
+        // Ratings & Star management inside Modal Form
+        function setReviewRating(rating) {
+            document.getElementById('new-review-rating').value = rating;
+            document.querySelectorAll('.review-star-btn').forEach(btn => {
+                const val = parseInt(btn.getAttribute('data-val'));
+                if (val <= rating) {
+                    btn.classList.add('text-amber-400');
+                    btn.classList.remove('text-slate-300');
+                } else {
+                    btn.classList.add('text-slate-300');
+                    btn.classList.remove('text-amber-400');
+                }
+            });
+        }
+
+        function submitReview(e) {
+            e.preventDefault();
+            if (!selectedProductForDetail) return;
+
+            const name = document.getElementById('new-review-name').value;
+            const comment = document.getElementById('new-review-comment').value;
+            const rating = parseInt(document.getElementById('new-review-rating').value);
+
+            selectedProductForDetail.reviews.push({ name, rating, comment });
+
+            renderReviewsList(selectedProductForDetail);
+            renderCatalog();
+            renderBestSellers();
+            renderNewArrivals();
+
+            document.getElementById('new-review-name').value = '';
+            document.getElementById('new-review-comment').value = '';
+            setReviewRating(5);
+
+            showToast("⭐⭐⭐⭐⭐ Ulasan Anda berhasil diterbitkan!");
+        }
+
+        function renderReviewsList(p) {
+            const container = document.getElementById('reviews-list');
+            container.innerHTML = '';
+
+            if (!p.reviews || p.reviews.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 italic py-2">Belum ada ulasan untuk produk ini. Jadilah yang pertama memberikan ulasan!</p>`;
+                return;
+            }
+
+            p.reviews.forEach(r => {
+                let starsHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    const fill = i <= r.rating ? 'fill-current text-amber-500' : 'text-slate-200';
+                    starsHTML += `<i data-lucide="star" class="w-3.5 h-3.5 ${fill}"></i>`;
+                }
+
+                container.innerHTML += `
+                    <div class="py-2.5 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-700">${r.name}</span>
+                            <div class="flex items-center gap-0.5">${starsHTML}</div>
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">${r.comment}</p>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // Social Media Share Simulation
+        function shareProduct(platform) {
+            if (!selectedProductForDetail) return;
+            const shareText = `Halo! Yuk lihat produk kreatif siswa "${selectedProductForDetail.name}" ini di Paradise Market seharga Rp ${selectedProductForDetail.price.toLocaleString('id-ID')}!`;
+
+            let shareUrl = "";
+            if (platform === 'whatsapp') {
+                shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+            } else if (platform === 'facebook') {
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://paradisemarket.sch.id/product/${selectedProductForDetail.id}`;
+            } else {
+                const tempInput = document.createElement("input");
+                tempInput.value = `https://paradisemarket.sch.id/product/${selectedProductForDetail.id}`;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                showToast(`🔗 Link produk disalin! Silakan bagikan ke ${platform}!`);
+                return;
+            }
+
+            window.open(shareUrl, '_blank');
+        }
+
+        // Favorites logic
+        function toggleFavorite(id) {
+            const idx = favorites.indexOf(id);
+            if (idx === -1) {
+                favorites.push(id);
+                showToast("❤️ Produk dimasukkan ke dalam Favorit!");
+            } else {
+                favorites.splice(idx, 1);
+                showToast("💔 Produk dihapus dari Favorit!");
+            }
+            updateFavoriteBadge();
+            renderCatalog();
+        }
+
+        // Update badge icon
+        function updateFavoriteBadge() {
+            const badge = document.getElementById('fav-badge');
+            if (favorites.length > 0) {
+                badge.textContent = favorites.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function openFavoritesModal() {
+            const container = document.getElementById('favorites-list-container');
+            container.innerHTML = '';
+
+            if (favorites.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 flex flex-col items-center justify-center gap-2">
+                        <i data-lucide="heart" class="w-10 h-10"></i>
+                        <p class="text-sm font-medium">Belum ada produk favorit terdaftar.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                document.getElementById('favorites-modal').classList.remove('hidden');
+                return;
+            }
+
+            favorites.forEach(favId => {
+                const p = products.find(prod => prod.id === favId);
+                if (p) {
+                    const div = document.createElement('div');
+                    div.className = "flex items-center justify-between py-3";
+                    div.innerHTML = `
+                        <div class="flex items-center gap-3 cursor-pointer" onclick="closeFavoritesModal(); openDetailModal(${p.id})">
+                            <span class="text-2xl">${p.emoji}</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">${p.name}</h4>
+                                <p class="text-xs text-teal-600 font-bold">Rp ${p.price.toLocaleString('id-ID')}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="addToCart(${p.id}); closeFavoritesModal();" class="p-1.5 bg-teal-50 text-teal-600 rounded-lg hover:bg-teal-100 transition">
+                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="toggleFavorite(${p.id}); openFavoritesModal();" class="p-1.5 bg-rose-50 text-rose-500 rounded-lg hover:bg-rose-100 transition">
+                                <i data-lucide="trash" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                }
+            });
+            lucide.createIcons();
+            document.getElementById('favorites-modal').classList.remove('hidden');
+        }
+
+        function closeFavoritesModal() {
+            document.getElementById('favorites-modal').classList.add('hidden');
+        }
+
+        // Shopping Cart logical flows
+        function addToCart(productId) {
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+
+            if (p.stock <= 0) {
+                showToast("❌ Maaf, stok produk habis!");
+                return;
+            }
+
+            const existingCartItem = cart.find(item => item.id === productId);
+            if (existingCartItem) {
+                if (existingCartItem.quantity + 1 > p.stock) {
+                    showToast("❌ Tidak bisa melebihi sisa stok!");
+                    return;
+                }
+                existingCartItem.quantity += 1;
+            } else {
+                cart.push({ ...p, quantity: 1 });
+            }
+
+            showToast(`🛒 ${p.name} ditambahkan ke keranjang!`);
+            updateCartUI();
+        }
+
+        function addCurrentToCart() {
+            if (selectedProductForDetail) {
+                addToCart(selectedProductForDetail.id);
+                closeDetailModal();
+            }
+        }
+
+        function updateCartQuantity(id, action) {
+            const item = cart.find(i => i.id === id);
+            const originalProd = products.find(p => p.id === id);
+
+            if (action === 'plus') {
+                if (item.quantity + 1 > originalProd.stock) {
+                    showToast("❌ Tidak bisa melebihi sisa stok!");
+                    return;
+                }
+                item.quantity += 1;
+            } else {
+                item.quantity -= 1;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+            }
+            updateCartUI();
+        }
+
+        function deleteCartItem(id) {
+            cart = cart.filter(item => item.id !== id);
+            showToast("🗑️ Item dihapus dari keranjang.");
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const cartBadge = document.getElementById('cart-badge');
+            const cartCountLabel = document.getElementById('cart-count-label');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (totalItems > 0) {
+                cartBadge.textContent = totalItems;
+                cartBadge.classList.remove('hidden');
+                cartCountLabel.textContent = `${totalItems} Item`;
+            } else {
+                cartBadge.classList.add('hidden');
+                cartCountLabel.textContent = `0 Item`;
+            }
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-slate-400 flex flex-col items-center justify-center gap-3">
+                        <i data-lucide="shopping-cart" class="w-12 h-12 text-slate-300"></i>
+                        <p class="text-sm font-medium">Keranjang belanjamu masih kosong!</p>
+                        <button onclick="switchTab('catalog')" class="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold py-2 px-4 rounded-xl shadow transition mt-2">Belanja Karya Siswa</button>
+                    </div>
+                `;
+                document.getElementById('submit-order-btn').disabled = true;
+                recalculateTotals();
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = '';
+            cart.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between py-4";
+                row.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl bg-slate-50 p-2 rounded-xl border border-slate-50 select-none">${item.emoji}</span>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm leading-tight">${item.name}</h4>
+                            <p class="text-xs text-slate-400 font-semibold">Stok: ${item.stock} • Rp ${item.price.toLocaleString('id-ID')}</p>
+                            <p class="text-xs text-teal-600 font-extrabold pt-0.5">Subtotal: Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-1.5 bg-slate-100 rounded-lg p-1">
+                            <button onclick="updateCartQuantity(${item.id}, 'minus')" class="p-1 hover:bg-white rounded transition text-slate-600"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button>
+                            <span class="text-xs font-bold px-2 text-slate-800">${item.quantity}</span>
+                            <button onclick="updateCartQuantity(${item.id}, 'plus')" class="p-1 hover:bg-white rounded transition text-slate-600"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                        <button onclick="deleteCartItem(${item.id})" class="p-2 hover:bg-rose-50 text-rose-500 rounded-lg transition">
+                            <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            document.getElementById('submit-order-btn').disabled = false;
+            recalculateTotals();
+            lucide.createIcons();
+        }
+
+        function recalculateTotals() {
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shippingType = document.getElementById('order-shipping').value;
+            let shippingCost = shippingType === 'jne' ? 10000 : 0;
+            let finalBill = subtotal + shippingCost;
+
+            document.getElementById('checkout-subtotal').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('checkout-shipping').textContent = `Rp ${shippingCost.toLocaleString('id-ID')}`;
+            document.getElementById('checkout-total').textContent = `Rp ${finalBill.toLocaleString('id-ID')}`;
+        }
+
+        // Process order simulation
+        function processOrder(e) {
+            e.preventDefault();
+
+            // Sesi Pembeli Gate Validation
+            if (!loggedInBuyer) {
+                showToast("⚠️ Silakan masuk sebagai Pembeli terlebih dahulu!");
+                openAuthModal('pembeli');
+                return;
+            }
+
+            const name = document.getElementById('order-name').value;
+            const address = document.getElementById('order-address').value;
+            const payment = document.getElementById('order-payment').value;
+
+            // Reduce actual stock of the products
+            cart.forEach(cartItem => {
+                const prod = products.find(p => p.id === cartItem.id);
+                if (prod) {
+                    prod.stock -= cartItem.quantity;
+                    prod.salesCount += cartItem.quantity;
+                }
+            });
+
+            renderCatalog();
+            renderBestSellers();
+            renderNewArrivals();
+            renderTopCreatorsList();
+            
+            if (loggedInStudent) {
+                updateDashboardStats();
+            }
+
+            const receiptID = "PM-" + Math.floor(100000 + Math.random() * 900000);
+            showReceiptPopup(receiptID, name, address, finalBillValue(), payment);
+
+            cart = [];
+            document.getElementById('checkout-form').reset();
+            
+            // Retain login session data but clear inputs
+            if (loggedInBuyer) {
+                document.getElementById('order-name').value = loggedInBuyer.name;
+                document.getElementById('order-address').value = loggedInBuyer.address;
+            }
+            updateCartUI();
+        }
+
+        function finalBillValue() {
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shippingType = document.getElementById('order-shipping').value;
+            let shippingCost = shippingType === 'jne' ? 10000 : 0;
+            return subtotal + shippingCost;
+        }
+
+        function showReceiptPopup(id, name, address, total, payment) {
+            const popup = document.createElement('div');
+            popup.className = "fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4";
+            popup.innerHTML = `
+                <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-slate-800 border border-slate-100">
+                    <div class="text-center space-y-1">
+                        <div class="inline-flex p-2 bg-emerald-50 rounded-full text-emerald-600 mb-2"><i data-lucide="badge-check" class="w-8 h-8"></i></div>
+                        <h3 class="font-extrabold text-lg">Pesanan Sukses Diterima!</h3>
+                        <p class="text-xs text-slate-400 font-semibold uppercase">ID Transaksi: ${id}</p>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-xl p-4 text-xs space-y-2 font-medium border border-slate-100">
+                        <div class="flex justify-between border-b border-slate-200 pb-2 text-slate-600">
+                            <span>Nama:</span>
+                            <span class="font-bold text-slate-800">${name}</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-200 pb-2 text-slate-600">
+                            <span>Kirim ke:</span>
+                            <span class="font-bold text-slate-800 text-right max-w-xs truncate">${address}</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-200 pb-2 text-slate-600">
+                            <span>Pembayaran:</span>
+                            <span class="font-bold text-slate-800 uppercase">${payment}</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-bold pt-1 text-slate-800">
+                            <span>Total Pembayaran:</span>
+                            <span class="text-teal-600">Rp ${total.toLocaleString('id-ID')}</span>
+                        </div>
+                    </div>
+
+                    <div class="text-[10px] text-center text-slate-400">
+                        *Detail order telah diteruskan ke kurir internal sekolah & kreator siswa terkait. Terima kasih telah berbelanja!
+                    </div>
+
+                    <button onclick="this.parentElement.parentElement.remove()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-950 text-white text-xs font-bold rounded-xl transition">
+                        Selesai & Tutup Nota
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(popup);
+            lucide.createIcons();
+        }
+
+        // Initialize sales chart
+        function initializeChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            salesChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu (Bazaar)'],
+                    datasets: [{
+                        label: 'Pendapatan (Ribu Rp)',
+                        data: [15, 30, 20, 45, 35, 50, 110],
+                        borderColor: '#0f766e',
+                        backgroundColor: 'rgba(15, 118, 110, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#0f766e',
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                font: { family: 'Inter', size: 11 }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Handle publishing student new products (Lock to Logged In Student)
+        function handleAddNewProduct(e) {
+            e.preventDefault();
+            if (!loggedInStudent) {
+                showToast("❌ Kesalahan: Anda harus masuk ke akun siswa Anda!");
+                return;
+            }
+
+            const name = document.getElementById('new-prod-name').value;
+            const price = parseInt(document.getElementById('new-prod-price').value);
+            const stock = parseInt(document.getElementById('new-prod-stock').value);
+            const category = document.getElementById('new-prod-category').value;
+            const desc = document.getElementById('new-prod-desc').value;
+
+            let emoji = "🎁";
+            if (category === 'Makanan') emoji = "🍞";
+            if (category === 'Camilan') emoji = "🍿";
+            if (category === 'Minuman') emoji = "🥤";
+            if (category === 'Kerajinan Tangan') emoji = "🎨";
+
+            const newProduct = {
+                id: products.length + 1,
+                name,
+                category,
+                price,
+                emoji,
+                creatorId: loggedInStudent.id,
+                stock,
+                salesCount: 0,
+                likes: 0,
+                reviews: [],
+                desc: desc || `Karya orisinal baru yang didesain dan dirakit dengan dedikasi penuh oleh Kak ${loggedInStudent.name} (${loggedInStudent.class}).`
+            };
+
+            products.push(newProduct);
+
+            renderCatalog();
+            renderBestSellers();
+            renderNewArrivals();
+            updateDashboardStats();
+
+            document.getElementById('add-product-form').reset();
+            showToast(`🚀 Produk "${name}" berhasil dipublikasikan di bawah nama Anda!`);
+        }
+
+        // Utility Toast notification alert
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = "bg-slate-900/95 text-white text-xs font-bold py-3 px-4 rounded-xl shadow-lg border border-slate-800 transition transform translate-y-5 opacity-0 flex items-center justify-between";
+            toast.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white pl-3">×</button>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-5', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-5', 'opacity-0');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
